@@ -1,0 +1,43 @@
+{
+  "name": "shaderlab",
+  "version": "1.0.0",
+  "description": "shaderlab",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run dev",
+    "build": "webpack -p",
+    "dev": "webpack-dev-server",
+    "deploy": "npm run build && aws s3 cp public s3://shaderlab --recursive --acl public-read"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.40",
+    "@babel/preset-env": "^7.0.0-beta.40",
+    "babel-loader": "^8.0.0-beta.0",
+    "babel-plugin-ramda": "^1.6.1",
+    "file-loader": "^1.1.6",
+    "ramda": "^0.25.0",
+    "raw-loader": "^0.5.1",
+    "webpack": "^3.11.0",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "babel": {
+    "plugins": [
+      "ramda"
+    ],
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "browsers": [
+              "last 2 versions"
+            ]
+          }
+        }
+      ]
+    ]
+  }
+}
