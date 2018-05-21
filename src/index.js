@@ -88,12 +88,10 @@ function compile() {
     return;
   }
   gl.useProgram(program);
-  // Look up where the vertex data needs to go.
+
   positionLocation = gl.getAttribLocation(program, 'a_position');
-  // Set the resolution
   resolutionLocation = gl.getUniformLocation(program, 'resolution');
   gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
-
   timeLocation = gl.getUniformLocation(program, 'time');
   gl.uniform1f(timeLocation, time);
 
@@ -103,7 +101,13 @@ function compile() {
 function syncLineNumbers() {
   const editor = document.querySelector('#editor')
   const lineNumbers = document.querySelector('#linenumbers')
-  lineNumbers.value = editor.value.split('\n').map((x, i) => `${i+1}`).join('\n')
+  lineNumbers.value = editor.value.split('\n').map((x, i) => {
+    if (i+1 < 10 ) {
+      return ` ${i + 1}`
+    } else {
+      return `${i + 1}`
+    }
+  }).join('\n')
 }
 
 function toggleEditor() {
@@ -134,52 +138,16 @@ function toggleExplorer() {
 }
 
 function createEditor() {
-
   let editor = H('textarea', {
     id: 'editor',
     spellcheck: false,
-    autocorrect: 'off',
-    style: `
-    position: absolute; 
-    z-index: 2;
-    top: 0; 
-    bottom: 0; 
-    left: 0; 
-    right: 0; 
-    background-color: rgba(30,30,30,0.7); 
-    border: 0; 
-    width:100%; 
-    box-sizing: border-box; 
-    padding: 4em 1em 4em 12em; 
-    color: rgba(255,255,255, 0.8);
-    font-size: 1.2em;
-    text-shadow: 2px 2px rgba(0,0,0, 0.5);
-    line-height: 1.5em;
-    outline: none;
-    `
+    autocorrect: 'off'
   })
   document.body.appendChild(editor)
   let lineNumbers = H('textarea', {
     id: 'linenumbers',
     spellcheck: false,
-    autocorrect: 'off',
-    style: `
-    position: absolute; 
-    z-index: 1;
-    top: 0; 
-    bottom: 0; 
-    left: 0; 
-    right: 0; 
-    background-color: transparent; 
-    border: 0; 
-    width:100%; 
-    box-sizing: border-box; 
-    padding: 4em 1em 4em 9em; 
-    color: rgba(200, 255, 0, 0.7);
-    font-size: 1.2em;
-    line-height: 1.5em;
-    outline: none;
-    `
+    autocorrect: 'off'
   })
   document.body.appendChild(lineNumbers)
   editor.focus()
@@ -192,7 +160,7 @@ function createEditor() {
   editor.addEventListener('scroll', () => {
     lineNumbers.scrollTop = editor.scrollTop;
   })
-  
+
   editor.addEventListener('keydown', function (e) {
     if (e.code === 'Enter' || e.code === 'Backspace') {
       syncLineNumbers()
@@ -217,43 +185,17 @@ function createEditor() {
 }
 
 function createInfoBox() {
-  const infoBox = H('div', {
-    id: 'info',
-    style: `
-    box-sizing: border-box;
-    position: absolute;
-    bottom: 0;
-    z-index: 5;
-    background-color: rgba(0,120,0, 1.0);
-    color: white;
-    right: 0;
-    left: 0;
-    padding: 0.5em;
-    box-sizing: border-box;
-    font-size: 0.8em;
-    min-height: 2em;
-    `
-  })
+  const infoBox = H('div', { id: 'info' })
   infoBox.innerText = 'Press Ctrl + Enter to recompile shader'
   document.body.appendChild(infoBox)
 }
 
 function createResetButton() {
   const button = document.createElement('button')
+  button.classList.add('button')
   button.setAttribute('style', `
-    position: absolute;
-    z-index: 5;
     top: 1rem;
     left: 1rem;
-    width: 2rem;
-    height: 2rem;
-    line-height: 2rem;
-    font-size: 1rem;
-    font-weight: bold;
-    background-color: rgba(30, 30, 30, 0.7);
-    color: rgba(200, 255, 0, 0.7);
-    border: 1px solid rgba(200, 255, 0, 0.7);
-    cursor: pointer;
   `)
   button.setAttribute('title', 'Factory reset')
   button.innerHTML = '<span class="fa fa-trash-alt"></span>'
@@ -268,20 +210,10 @@ function createResetButton() {
 
 function createBrowserButton() {
   const button = document.createElement('button')
+  button.classList.add('button')
   button.setAttribute('style', `
-    position: absolute;
-    z-index: 5;
     top: 1rem;
     left: 4rem;
-    width: 2rem;
-    height: 2rem;
-    line-height: 2rem;
-    font-size: 1rem;
-    font-weight: bold;
-    background-color: rgba(30, 30, 30, 0.7);
-    color: rgba(200, 255, 0, 0.7);
-    border: 1px solid rgba(200, 255, 0, 0.7);
-    cursor: pointer;
   `)
   button.setAttribute('title', 'Examples')
   button.innerHTML = '<span class="fa fa-list-alt"></span>'
@@ -293,20 +225,10 @@ function createBrowserButton() {
 
 function createEditorButton() {
   const button = document.createElement('button')
+  button.classList.add('button')
   button.setAttribute('style', `
-    position: absolute;
-    z-index: 5;
     top: 1rem;
     left: 7rem;
-    width: 2rem;
-    height: 2rem;
-    line-height: 2rem;
-    font-size: 1rem;
-    font-weight: bold;
-    background-color: rgba(30, 30, 30, 0.7);
-    color: rgba(200, 255, 0, 0.7);
-    border: 1px solid rgba(200, 255, 0, 0.7);
-    cursor: pointer;
   `)
   button.setAttribute('title', 'Toggle Editor (Ctrl + Space)')
   button.innerHTML = '<span class="fa fa-edit"></span>'
@@ -320,19 +242,7 @@ function createBrowser() {
   const browser = document.createElement('div')
   browser.classList.add('hidden')
   browser.setAttribute('id', 'browser')
-  browser.setAttribute('style', `
-  position: absolute;
-  z-index: 3;
-  width: 10em;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(0,0,0, 0.7);
-  color: white;
-  box-sizing: border-box;
-  padding: 1em;
-  `)
-
+ 
   const h1 = document.createElement('h1')
   h1.setAttribute('style', `
   font-size: 1.5em;
@@ -365,14 +275,6 @@ function createBrowser() {
 }
 
 function main() {
-  document.body.setAttribute('style', `
-  padding:0;
-  margin: 0;
-  background-color: black;
-  font-size: 100%;
-  font-family: Courier;
-  overflow-x: hidden;
-  `);
   canvas = document.createElement('canvas')
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
