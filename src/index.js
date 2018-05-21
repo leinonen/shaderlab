@@ -100,16 +100,25 @@ function compile() {
   infoMessage('Shader compiled successfully. Press Ctrl + Enter to save, Ctrl + Space to toggle editor')
 }
 
+function syncLineNumbers() {
+  const editor = document.querySelector('#editor')
+  const lineNumbers = document.querySelector('#linenumbers')
+  lineNumbers.value = editor.value.split('\n').map((x, i) => `${i+1}`).join('\n')
+}
+
 function toggleEditor() {
   showEditor = !showEditor
   const editor = document.querySelector('#editor')
+  const linenumbers = document.querySelector('#linenumbers')
   if (showEditor) {
     editor.classList.remove('hidden')
+    linenumbers.classList.remove('hidden')
     editor.selectionEnd = selectionEnd
     editor.selectionStart = selectionStart
     editor.focus()
   } else {
     editor.classList.add('hidden')
+    linenumbers.classList.add('hidden')
     selectionEnd = editor.selectionEnd
     selectionStart = editor.selectionStart
   }
@@ -132,6 +141,7 @@ function createEditor() {
     autocorrect: 'off',
     style: `
     position: absolute; 
+    z-index: 2;
     top: 0; 
     bottom: 0; 
     left: 0; 
@@ -149,13 +159,44 @@ function createEditor() {
     `
   })
   document.body.appendChild(editor)
+  let lineNumbers = H('textarea', {
+    id: 'linenumbers',
+    spellcheck: false,
+    autocorrect: 'off',
+    style: `
+    position: absolute; 
+    z-index: 1;
+    top: 0; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    background-color: transparent; 
+    border: 0; 
+    width:100%; 
+    box-sizing: border-box; 
+    padding: 4em 1em 4em 9em; 
+    color: rgba(128,128,128, 0.8);
+    font-size: 1.2em;
+    line-height: 1.5em;
+    outline: none;
+    `
+  })
+  document.body.appendChild(lineNumbers)
   editor.focus()
   editor.value = window.localStorage.getItem('shader') || cubeShader
+  syncLineNumbers()
   editor.scrollTop = 0
   editor.selectionStart = 0;
   editor.selectionEnd = 0;
 
+  editor.addEventListener('scroll', () => {
+    lineNumbers.scrollTop = editor.scrollTop;
+  })
+  
   editor.addEventListener('keydown', function (e) {
+    if (e.code === 'Enter' || e.code === 'Backspace') {
+      syncLineNumbers()
+    }
     if (e.keyCode == 9 || e.which == 9) {
       e.preventDefault();
       let start = this.selectionStart
@@ -218,7 +259,8 @@ function createResetButton() {
   button.innerHTML = '<span class="fa fa-trash-alt"></span>'
   button.addEventListener('click', () => {
     window.localStorage.setItem('shader', cubeShader)
-    document.querySelector('textarea').value = cubeShader
+    document.querySelector('#editor').value = cubeShader
+    syncLineNumbers()
     compile()
   })
   document.body.appendChild(button)
@@ -309,6 +351,7 @@ function createBrowser() {
       toggleExplorer()
       window.localStorage.setItem('shader', shader)
       document.querySelector('#editor').value = shader;
+      syncLineNumbers()
       compile()
     })
     return item
