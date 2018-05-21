@@ -55,12 +55,13 @@ void main( void ) {
   float t = 0.0;
 
   for (int i = 0 ; i < 128; i++) {
-    float k = map(camPos + rd * t);
+    float k = map(ro + rd * t);
     t += k * 0.75;
     if ((k < 0.01) || (t>150.)){ break; }
   }
 	
-  vec3 sp = t * rd + camPos;
+  vec3 sp = ro + rd * t;
+
   vec3 surfNormal = getNormal(sp);
   vec3 ld = lightPos - sp;
 
