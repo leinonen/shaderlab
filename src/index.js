@@ -3,6 +3,8 @@ const cubeShader = require('./examples/raymarch_cube.frag')
 const plasmaShader = require('./examples/plasma.frag')
 const juliaShader = require('./examples/julia.frag')
 
+const pkgJson = require('../package.json')
+
 let gl;
 let time = 0.0;
 let timeLocation;
@@ -187,6 +189,12 @@ function createEditor() {
   })
 }
 
+function createTitle() {
+  const title = H('h1', { id: 'title'})
+  title.innerText = `${pkgJson.name}/${pkgJson.version}`
+  document.body.appendChild(title)
+}
+
 function createInfoBox() {
   const infoBox = H('div', { id: 'info' })
   infoBox.innerText = 'Press Ctrl + Enter to recompile shader'
@@ -294,6 +302,7 @@ function main() {
   createResetButton()
   createBrowserButton()
   createBrowser()
+  createTitle()
 
   gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
   if (!gl) {
