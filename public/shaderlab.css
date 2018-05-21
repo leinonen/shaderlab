@@ -32,7 +32,7 @@ textarea::selection {
   border: 0; 
   width:100%; 
   box-sizing: border-box; 
-  padding: 4em 1em 4em 12em; 
+  padding: 4em 1em 4em 13em; 
   color: rgba(255,255,255, 0.8);
   font-size: 1.2em;
   text-shadow: 2px 2px rgba(0,0,0, 0.5);
@@ -51,7 +51,7 @@ textarea::selection {
   border: 0; 
   width:100%; 
   box-sizing: border-box; 
-  padding: 4em 1em 4em 9em; 
+  padding: 4em 1em 4em 10em; 
   color: rgba(200, 255, 0, 0.7);
   font-size: 1.2em;
   line-height: 1.5em;
