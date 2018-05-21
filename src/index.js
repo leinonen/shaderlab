@@ -2,6 +2,7 @@ const vertexShaderSource = require('./shader.vert')
 const cubeShader = require('./examples/raymarch_cube.frag')
 const plasmaShader = require('./examples/plasma.frag')
 const juliaShader = require('./examples/julia.frag')
+const latticeShader = require('./examples/lattice.frag')
 
 const pkgJson = require('../package.json')
 
@@ -20,8 +21,12 @@ let selectionStart
 
 const examples = [
   {
-    name: 'Raymarcher',
+    name: 'Cube',
     source: cubeShader
+  },
+  {
+    name: 'Lattice',
+    source: latticeShader
   },
   {
     name: 'Plasma',
