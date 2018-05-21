@@ -25,15 +25,6 @@ float sdBox(vec3 p, vec3 b) {
   return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
 }
 
-float sdCross( in vec3 p )
-{
-  float inf = 3.0;
-  float da = sdBox(p.xyz,vec3(inf,1.0,1.0));
-  float db = sdBox(p.yzx,vec3(1.0,inf,1.0));
-  float dc = sdBox(p.zxy,vec3(1.0,1.0,inf));
-  return min(da,min(db,dc));
-}
-
 float map(vec3 p) {
   float a = PI * 2.0 * time;
   p.xy *= rot2( p.z/22.0 );
