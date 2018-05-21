@@ -71,9 +71,9 @@ vec3 getNormal(in vec3 p) {
 void main( void ) {
   vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
 	
-  vec3 lookAt = vec3(0.0, 0.0, -time);
+  vec3 lookAt = vec3(0.0 + 0.4 * sin(time), 0.5 * cos(time), -time);
   vec3 camPos = lookAt + vec3(0.0, 0.0, lookAt.z - 2.5);
-  vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 6.0);
+  vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 7.0);
 	
   vec3 forward = normalize(lookAt + camPos);
   vec3 right = normalize(vec3(forward.z, 0., -forward.x ));
@@ -86,7 +86,7 @@ void main( void ) {
 	
   float t = 0.0;
 
-  for (int i = 0 ; i < 25; i++) {
+  for (int i = 0 ; i < 50; i++) {
     float k = map(ro + rd * t);
     t += k * 0.75;
     if ((k < 0.01) || (t>150.)){ break; }
@@ -110,7 +110,7 @@ void main( void ) {
   specular = pow(specular, specularPower);
 	
   vec3 sceneColor = vec3(0.2, 0.3, 0.4) * 0.4;
-  vec3 objColor = hsv2rgb(vec3(sp.z / 22.0, 0.5 + 0.5 * sin(sp.z), .50));
+  vec3 objColor = hsv2rgb(vec3((sp.x + sp.y + sp.z) / 12.0, 0.5 + 0.5 * sin(sp.z), .50));
   vec3 lightColor = vec3(1.0);
   sceneColor += (objColor*(diffuse*0.8+ambient)+specular*0.5)*lightColor*lightAtten;
 
