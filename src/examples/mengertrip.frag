@@ -27,7 +27,7 @@ float sdBox(vec3 p, vec3 b) {
 
 float map(vec3 p) {
   float a = PI * 2.0 * time;
-  p.xy *= rot2( p.z/22.0 );
+  p.xy *= rot2( p.z/8.0 );
 
   p = mod(p, 3.0) - 1.5;
   p.xy *= rot2( 0.1 * a + p.z/2.0 );
@@ -70,10 +70,13 @@ void main( void ) {
   vec3 right = normalize(vec3(forward.z, 0., -forward.x ));
   vec3 up = normalize(cross(forward, right));
 		
-  float FOV = 0.75;
+  float FOV = 1.2;
 
   vec3 ro = camPos; 
   vec3 rd = normalize(forward + FOV*uv.x*right + FOV*uv.y*up);
+  rd.xy *= rot2( PI*sin(-time*0.5)/4.0 );
+  rd.yz *= rot2( PI*sin(-time*0.25)/6.0 );
+  rd.xz *= rot2( PI*sin(-time*0.5)/12.0 );
 	
   float t = 0.0;
 
