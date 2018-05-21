@@ -63,8 +63,9 @@ textarea::selection {
   position: absolute;
   bottom: 0;
   z-index: 5;
-  background-color: rgba(0,120,0, 1.0);
-  color: white;
+  /* background-color: rgba(0,120,0, 1.0); */
+  background-color: black;
+  color :rgb(200, 255, 0);
   right: 0;
   left: 0;
   padding: 0.5em;
@@ -98,8 +99,14 @@ textarea::selection {
   line-height: 2rem;
   font-size: 1rem;
   font-weight: bold;
-  background-color: rgba(30, 30, 30, 0.7);
+  background-color: rgba(30, 30, 30, 0.5);
   color: rgba(200, 255, 0, 0.7);
-  border: 1px solid rgba(200, 255, 0, 0.7);
+  border: 1px solid transparent;
   cursor: pointer;
+  transition: border-color 0.25s ease;
+  outline-color: rgba(200, 255, 0, 0.8);
+}
+
+.button:hover {
+  border: 1px solid rgba(200, 255, 0, 0.7);
 }
