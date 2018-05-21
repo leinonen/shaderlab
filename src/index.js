@@ -96,6 +96,9 @@ function compile() {
   gl.uniform1f(timeLocation, time);
 
   infoMessage('Shader compiled successfully. Press Ctrl + Enter to save, Ctrl + Space to toggle editor')
+  setTimeout(() => {
+    infoMessage('Press Ctrl + Enter to save, Ctrl + Space to toggle editor')
+  }, 5000)
 }
 
 function syncLineNumbers() {
