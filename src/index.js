@@ -175,7 +175,7 @@ function createEditor() {
     width:100%; 
     box-sizing: border-box; 
     padding: 4em 1em 4em 9em; 
-    color: rgba(128,128,128, 0.8);
+    color: rgba(200, 255, 0, 0.7);
     font-size: 1.2em;
     line-height: 1.5em;
     outline: none;
