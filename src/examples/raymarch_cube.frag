@@ -41,11 +41,11 @@ void main( void ) {
 	
   vec3 lookAt = vec3(0.0, 0.0, 0.0);
   vec3 camPos = lookAt + vec3(0.0, 0.0, lookAt.z - 2.0);
-  vec3 light_pos = lookAt + vec3(0.0, 1.0, lookAt.z - 2.0);
+  vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 2.0);
 	
-  vec3 forward = normalize(lookAt-camPos);
+  vec3 forward = normalize(lookAt - camPos);
   vec3 right = normalize(vec3(forward.z, 0., -forward.x ));
-  vec3 up = normalize(cross(forward,right));
+  vec3 up = normalize(cross(forward, right));
 		
   float FOV = 0.75;
 
@@ -62,7 +62,7 @@ void main( void ) {
 	
   vec3 sp = t * rd + camPos;
   vec3 surfNormal = getNormal(sp);
-  vec3 ld = light_pos - sp;
+  vec3 ld = lightPos - sp;
 
   float len = length( ld );
   ld /= len;
@@ -78,8 +78,8 @@ void main( void ) {
 	
   vec3 sceneColor = vec3(0.2, 0.3, 0.4) * 0.4;
   vec3 objColor = vec3(1.0);
-  vec3 lcolor = vec3(1.0);
-  sceneColor += (objColor*(diffuse*0.8+ambient)+specular*0.5)*lcolor*lightAtten;
+  vec3 lightColor = vec3(1.0);
+  sceneColor += (objColor*(diffuse*0.8+ambient)+specular*0.5)*lightColor*lightAtten;
 
   vec3 col = clamp(sceneColor, 0.0, 1.0);
   gl_FragColor = vec4(col, 1.0);

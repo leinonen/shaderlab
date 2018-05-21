@@ -1,10 +1,13 @@
 const vertexShaderSource = require('./shader.vert')
-const fragmentShaderSource = require('./shader.frag')
+const cubeShader = require('./examples/raymarch_cube.frag')
+const plasmaShader = require('./examples/plasma.frag')
+const juliaShader = require('./examples/julia.frag')
 
 let gl;
 let time = 0.0;
 let timeLocation;
 let positionLocation;
+let resolutionLocation;
 let start = 0.0;
 let fps = 0;
 let fpstime = 0.0;
@@ -12,6 +15,29 @@ let canvas
 let showEditor = true
 let selectionEnd
 let selectionStart
+
+const examples = [
+  {
+    name: 'Raymarcher',
+    source: cubeShader
+  },
+  {
+    name: 'Plasma',
+    source: plasmaShader
+  },
+  {
+    name: 'Julia Fractal',
+    source: juliaShader
+  }
+]
+
+function H(type, attribs) {
+  const el = document.createElement(type)
+  Object.keys(attribs).forEach(attribKey => {
+    el.setAttribute(attribKey, attribs[attribKey])
+  })
+  return el;
+}
 
 function getShader(gl, type, source) {
   let shader;
@@ -45,7 +71,7 @@ function errorMessage(msg) {
 }
 
 function compile() {
-  const shaderSource = window.localStorage.getItem('shader') || fragmentShaderSource
+  const shaderSource = window.localStorage.getItem('shader') || cubeShader
   let vertexShader = getShader(gl, 'vertex', vertexShaderSource);
   let fragmentShader = getShader(gl, 'fragment', shaderSource);
   let program = gl.createProgram();
@@ -65,7 +91,7 @@ function compile() {
   // Look up where the vertex data needs to go.
   positionLocation = gl.getAttribLocation(program, 'a_position');
   // Set the resolution
-  let resolutionLocation = gl.getUniformLocation(program, 'resolution');
+  resolutionLocation = gl.getUniformLocation(program, 'resolution');
   gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
 
   timeLocation = gl.getUniformLocation(program, 'time');
@@ -74,31 +100,60 @@ function compile() {
   infoMessage('Shader compiled successfully. Press Ctrl + Enter to save, Ctrl + Space to toggle editor')
 }
 
+function toggleEditor() {
+  showEditor = !showEditor
+  const editor = document.querySelector('textarea')
+  if (showEditor) {
+    editor.classList.remove('hidden')
+    editor.selectionEnd = selectionEnd
+    editor.selectionStart = selectionStart
+    editor.focus()
+  } else {
+    editor.classList.add('hidden')
+    selectionEnd = editor.selectionEnd
+    selectionStart = editor.selectionStart
+  }
+}
+
+function toggleExplorer() {
+  const browser = document.querySelector('#browser')
+  if (browser.classList.contains('hidden')) {
+    browser.classList.remove('hidden')
+  } else {
+    browser.classList.add('hidden')
+  }
+}
+
 function createEditor() {
 
-  let editor = document.createElement('textarea')
-  editor.setAttribute('spellcheck', false)
-  editor.setAttribute('autocorrect', 'off')
-  editor.setAttribute('style', `
-  position: absolute; 
-  top: 0; 
-  bottom: 0; 
-  left: 0; 
-  right: 0; 
-  background-color: rgba(30,30,30,0.7); 
-  border: 0; 
-  width:100%; 
-  box-sizing: border-box; 
-  padding: 4em 8em; 
-  color: rgba(255,255,255, 0.8);
-  font-size: 1.2em;
-  line-height: 1.5em;
-  outline: none;
-  `)
+  let editor = H('textarea', {
+    spellcheck: false,
+    autocorrect: 'off',
+    style: `
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    background-color: rgba(30,30,30,0.7); 
+    border: 0; 
+    width:100%; 
+    box-sizing: border-box; 
+    padding: 4em 1em 4em 12em; 
+    color: rgba(255,255,255, 0.8);
+    font-size: 1.2em;
+    line-height: 1.5em;
+    outline: none;
+    `
+  })
   document.body.appendChild(editor)
-  editor.value = window.localStorage.getItem('shader') || fragmentShaderSource
+  editor.focus()
+  editor.value = window.localStorage.getItem('shader') || cubeShader
+  editor.scrollTop = 0
+  editor.selectionStart = 0;
+  editor.selectionEnd = 0;
 
-  editor.addEventListener('keydown', function(e) {
+  editor.addEventListener('keydown', function (e) {
     if (e.keyCode == 9 || e.which == 9) {
       e.preventDefault();
       let start = this.selectionStart
@@ -113,35 +168,29 @@ function createEditor() {
 
   window.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.code === 'Space') {
-      showEditor = !showEditor
-      if (showEditor) {
-        editor.classList.remove('hidden')
-        editor.selectionEnd = selectionEnd
-        editor.selectionStart = selectionStart
-        editor.focus()
-      } else {
-        editor.classList.add('hidden')
-        selectionEnd = editor.selectionEnd
-        selectionStart = editor.selectionStart
-      }     
+      toggleEditor()
     }
   })
 }
 
 function createInfoBox() {
-  const infoBox = document.createElement('div')
-  infoBox.setAttribute('id', 'info')
-  infoBox.setAttribute('style', `
+  const infoBox = H('div', {
+    id: 'info',
+    style: `
+    box-sizing: border-box;
     position: absolute;
     bottom: 0;
-    z-index: 2;
-    background-color: rgba(0,120,0, 0.7);
+    z-index: 5;
+    background-color: rgba(0,120,0, 1.0);
     color: white;
-    width: 100%;
+    right: 0;
+    left: 0;
     padding: 0.5em;
     box-sizing: border-box;
     font-size: 0.8em;
-  `)
+    min-height: 2em;
+    `
+  })
   infoBox.innerText = 'Press Ctrl + Enter to recompile shader'
   document.body.appendChild(infoBox)
 }
@@ -150,9 +199,9 @@ function createResetButton() {
   const button = document.createElement('button')
   button.setAttribute('style', `
     position: absolute;
-    z-index: 2;
+    z-index: 5;
     top: 1rem;
-    right: 1rem;
+    left: 1rem;
     width: 2rem;
     height: 2rem;
     line-height: 2rem;
@@ -166,11 +215,108 @@ function createResetButton() {
   button.setAttribute('title', 'Factory reset')
   button.innerHTML = '<span class="fa fa-trash-alt"></span>'
   button.addEventListener('click', () => {
-    window.localStorage.setItem('shader', fragmentShaderSource)
-    document.querySelector('textarea').value = fragmentShaderSource
+    window.localStorage.setItem('shader', cubeShader)
+    document.querySelector('textarea').value = cubeShader
     compile()
   })
   document.body.appendChild(button)
+}
+
+function createBrowserButton() {
+  const button = document.createElement('button')
+  button.setAttribute('style', `
+    position: absolute;
+    z-index: 5;
+    top: 1rem;
+    left: 4rem;
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: rgba(30, 30, 30, 0.7);
+    color: rgba(200, 255, 0, 0.7);
+    border: 1px solid rgba(200, 255, 0, 0.7);
+    cursor: pointer;
+  `)
+  button.setAttribute('title', 'Examples')
+  button.innerHTML = '<span class="fa fa-list-alt"></span>'
+  button.addEventListener('click', () => {
+    toggleExplorer()
+  })
+  document.body.appendChild(button)
+}
+
+function createEditorButton() {
+  const button = document.createElement('button')
+  button.setAttribute('style', `
+    position: absolute;
+    z-index: 5;
+    top: 1rem;
+    left: 7rem;
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: rgba(30, 30, 30, 0.7);
+    color: rgba(200, 255, 0, 0.7);
+    border: 1px solid rgba(200, 255, 0, 0.7);
+    cursor: pointer;
+  `)
+  button.setAttribute('title', 'Toggle Editor (Ctrl + Space)')
+  button.innerHTML = '<span class="fa fa-edit"></span>'
+  button.addEventListener('click', () => {
+    toggleEditor()
+  })
+  document.body.appendChild(button)
+}
+
+function createBrowser() {
+  const browser = document.createElement('div')
+  browser.classList.add('hidden')
+  browser.setAttribute('id', 'browser')
+  browser.setAttribute('style', `
+  position: absolute;
+  z-index: 3;
+  width: 10em;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0,0,0, 0.7);
+  color: white;
+  box-sizing: border-box;
+  padding: 1em;
+  `)
+
+  const h1 = document.createElement('h1')
+  h1.setAttribute('style', `
+  font-size: 1.5em;
+  margin-top: 2em;
+  `)
+  h1.innerText = 'Examples'
+  browser.appendChild(h1)
+
+  const ul = document.createElement('ul')
+  ul.setAttribute('style', `list-style-type: none; margin: 0; padding: 0;`)
+
+  const createItem = (name, shader) => {
+    const item = H('li', { style: `cursor: pointer; line-height: 1.5rem;` })
+    item.innerText = name
+    item.addEventListener('click', () => {
+      toggleExplorer()
+      window.localStorage.setItem('shader', shader)
+      document.querySelector('textarea').value = shader;
+      compile()
+    })
+    return item
+  }
+  examples.forEach(example => {
+    ul.appendChild(createItem(example.name, example.source))
+  })
+  browser.appendChild(ul)
+
+  document.body.appendChild(browser)
 }
 
 function main() {
@@ -189,11 +335,15 @@ function main() {
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
+    gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
   })
 
   createEditor()
+  createEditorButton()
   createInfoBox()
   createResetButton()
+  createBrowserButton()
+  createBrowser()
 
   gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
   if (!gl) {
@@ -240,6 +390,7 @@ function render() {
   let elapsedtime = (Date.now() - start) / 1000.0;
   let framespeed = 1.0;
 
+  gl.viewport(0, 0, canvas.width, canvas.height)
   time += framespeed * elapsedtime;
   gl.uniform1f(timeLocation, time);
 
