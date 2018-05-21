@@ -102,7 +102,7 @@ function compile() {
 
 function toggleEditor() {
   showEditor = !showEditor
-  const editor = document.querySelector('textarea')
+  const editor = document.querySelector('#editor')
   if (showEditor) {
     editor.classList.remove('hidden')
     editor.selectionEnd = selectionEnd
@@ -127,6 +127,7 @@ function toggleExplorer() {
 function createEditor() {
 
   let editor = H('textarea', {
+    id: 'editor',
     spellcheck: false,
     autocorrect: 'off',
     style: `
@@ -142,6 +143,7 @@ function createEditor() {
     padding: 4em 1em 4em 12em; 
     color: rgba(255,255,255, 0.8);
     font-size: 1.2em;
+    text-shadow: 2px 2px rgba(0,0,0, 0.5);
     line-height: 1.5em;
     outline: none;
     `
@@ -306,7 +308,7 @@ function createBrowser() {
     item.addEventListener('click', () => {
       toggleExplorer()
       window.localStorage.setItem('shader', shader)
-      document.querySelector('textarea').value = shader;
+      document.querySelector('#editor').value = shader;
       compile()
     })
     return item
