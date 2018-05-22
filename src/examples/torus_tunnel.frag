@@ -62,7 +62,7 @@ void main( void ) {
   camPos.x -= 0.9*sin(camPos.z);
   camPos.y -= 0.9*cos(camPos.z);
 
-  vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 2.0);
+  vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z + sin(time) * 10.0);
 	
   vec3 forward = normalize(lookAt + camPos);
   vec3 right = normalize(vec3(forward.z, 0., -forward.x ));
@@ -96,15 +96,15 @@ void main( void ) {
 
   vec3 ref = reflect(-ld, surfNormal);
 	
-  float ambient = .2;
-  float specularPower = 118.0;
+  float ambient = .5;
+  float specularPower = 18.0;
   float diffuse = max( 0.0, dot(surfNormal, ld) );
   float specular = max( 0.0, dot( ref, normalize(camPos-sp)) );
   specular = pow(specular, specularPower);
 	
   vec3 sceneColor = vec3(0.2, 0.3, 0.4) * 0.4;
-  vec3 objColor = vec3(sp.z / 29.0, sp.z / 200.0, 0.4) * 0.12;
-  vec3 lightColor = vec3(1.0, 0.8, 0.02);
+  vec3 objColor = vec3(1.0);
+  vec3 lightColor = vec3(1.0, 0.2, 0.02);
   sceneColor += (objColor*(diffuse*0.8+ambient)+specular*0.5)*lightColor*lightAtten;
 
   vec3 col = clamp(sceneColor, 0.0, 1.0);
