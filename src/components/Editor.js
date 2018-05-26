@@ -17,7 +17,7 @@ export default class Editor extends Component {
       theme="gruvbox"
       tabSize={2}
       showPrintMargin={false}
-      editorProps={{ $blockScrolling: true }}
+      editorProps={{ $blockScrolling: Infinity }}
     />
   }
 }
