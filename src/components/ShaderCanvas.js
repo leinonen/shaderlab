@@ -68,7 +68,10 @@ export default class ShaderCanvas extends Component {
     return shader;
   }
 
-  compile(source = fragmentShaderSource) {
+  compile(source) {
+    if (!source) {
+      source = window.localStorage.getItem('shader') || fragmentShaderSource
+    }
 
     let gl = this.gl
     try {

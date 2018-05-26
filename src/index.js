@@ -12,9 +12,10 @@ class App extends Component {
 
   constructor(props) {
     super(props)
+    let currentShader = window.localStorage.getItem('shader') || fragmentShaderSource
     this.state = {
-      shaderSource: fragmentShaderSource,
-      editorText: fragmentShaderSource,
+      shaderSource: currentShader,
+      editorText: currentShader,
       showEditor: true,
       compileSucces: true,
       compileMessage: '',
@@ -30,6 +31,7 @@ class App extends Component {
     this.onCompileError = this.onCompileError.bind(this)
     this.onCompileSuccess = this.onCompileSuccess.bind(this)
     this.onFullscreen = this.onFullscreen.bind(this)
+    this.onReset = this.onReset.bind(this)
   }
 
   componentDidMount() {
@@ -89,6 +91,14 @@ class App extends Component {
 
   onCompileSuccess() {
     this.setState({ compileSucces: true, compileMessage: 'Compile successful. Press Ctrl + Enter to compile shader, Ctrl + Space to toggle editor.' })
+    window.localStorage.setItem('shader', this.state.shaderSource)
+  }
+
+  onReset() {
+    this.setState({ 
+      shaderSource: fragmentShaderSource,
+      editorText: fragmentShaderSource,
+    })
   }
 
   render() {
@@ -108,6 +118,7 @@ class App extends Component {
           onEditorToggle={this.toggleEditor}
           onSelectExample={this.onSelectExample}
           onFullscreen={this.onFullscreen}
+          onReset={this.onReset}
         />
         <Editor
           style={{ visibility: this.state.showEditor ? 'visible' : 'hidden' }}
