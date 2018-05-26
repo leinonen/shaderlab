@@ -4,121 +4,34 @@ body {
   background-color: black;
   font-size: 100%;
   font-family: Courier;
-  overflow-x: hidden;
-}
-
-.hidden {
-  display: none;
-}
-.error {
-  background-color: rgba(50,10,10, 1.0) !important;
-  color: yellow !important;
-}
-textarea::selection {
-  color: black;
-  text-shadow: none;
-  background-color: rgba(204,255,0, 0.7);
-  text-shadow: none;
+  overflow: hidden;
 }
 
 #editor {
-  position: absolute; 
+  position: absolute;
   z-index: 2;
   top: 0; 
   bottom: 0; 
   left: 0; 
   right: 0; 
-  background-color: rgba(30,30,30,0.7); 
-  border: 0; 
-  width:100%; 
-  box-sizing: border-box; 
-  padding: 4em 1em 4em 13em; 
-  color: rgba(255,255,255, 0.8);
-  font-size: 1.2em;
-  text-shadow: 2px 2px rgba(0,0,0, 0.5);
-  line-height: 1.5em;
-  outline: none;
+  background-color: rgba(30,30,30,0.6); 
+  font-size: 1.2rem;
+  line-height: 1.5rem;
 }
 
-#title {
-  position: absolute;
-  right: 1.5rem;
-  top: 1.5rem;
-  color: rgba(200, 255, 0, 0.7);
-  margin: 0;
-  font-size: 1rem;
-  text-shadow: 2px 2px rgba(0,0,0, 0.5);
-  z-index: 8;
+.ace_gutter {
+  background-color: rgba(30,30,30,0.6); 
 }
 
-#linenumbers {
-  position: absolute; 
-  z-index: 1;
-  top: 0; 
-  bottom: 0; 
-  left: 0; 
-  right: 0; 
-  background-color: transparent; 
-  border: 0; 
-  width:100%; 
-  box-sizing: border-box; 
-  padding: 4em 1em 4em 10em; 
-  color: rgba(200, 255, 0, 0.7);
-  font-size: 1.2em;
-  line-height: 1.5em;
-  outline: none;
+.ace-gruvbox .ace_marker-layer .ace_active-line {
+  background-color: rgba(130,130,130,0.3) !important;
 }
 
-#info {
-  box-sizing: border-box;
-  position: absolute;
-  bottom: 0;
-  z-index: 5;
-  /* background-color: rgba(0,120,0, 1.0); */
-  background-color: black;
-  color :rgb(200, 255, 0);
-  right: 0;
-  left: 0;
-  padding: 0.5em;
-  box-sizing: border-box;
-  font-size: 0.8em;
-  min-height: 2em;
+a, a:visited {
+  color: rgba(200,255,0,0.7);
+  text-decoration: none;
 }
 
-#browser {
-  position: absolute;
-  z-index: 3;
-  width: 10em;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(0,0,0, 0.7);
-  color: white;
-  box-sizing: border-box;
-  padding: 1em;
-}
-
-.button-container {
-  display: flex;
-}
-
-.button {
-  position: absolute;
-  z-index: 5;
-  width: 2rem;
-  height: 2rem;
-  line-height: 2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  background-color: rgba(30, 30, 30, 0.5);
-  color: rgba(200, 255, 0, 0.7);
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: border-color 0.25s ease;
-  outline-color: rgba(200, 255, 0, 0.8);
-  border-radius: 4px;
-}
-
-.button:hover {
-  border: 1px solid rgba(200, 255, 0, 0.7);
+li {
+  line-height: 1.5rem;
 }
