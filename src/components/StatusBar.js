@@ -9,7 +9,7 @@ const StatusBarWrapper = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: ${props => props.error === true ? 'rgba(50,10,10, 1.0)' : 'rgba(10,10,10, 1.0)'};
+  background-color: ${props => props.error === true ? 'rgba(50,10,10, 0.9)' : 'rgba(10,10,10, 0.9)'};
   color: ${props => props.error === true ? 'yellow' : 'rgb(200, 255, 0)'};;
   padding: 0.5em;
   box-sizing: border-box;
