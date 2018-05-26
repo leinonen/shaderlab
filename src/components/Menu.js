@@ -6,6 +6,7 @@ import Button from './Button'
 import exampleHippiePlasma from '../examples/fun_plasma.frag'
 import exampleRaymarcher from '../examples/raymarch_cube.frag'
 import exampleLattice from '../examples/lattice.frag'
+import exampleFractal from '../examples/julia.frag'
 
 import primitiveSphere from '../primitives/sphere.glsl'
 import primitiveBox from '../primitives/box.glsl'
@@ -114,6 +115,7 @@ class Menu extends Component {
           name: 'Example shaders',
           items: [
             { name: 'Plasma (Default)', source: exampleHippiePlasma, showSource: false },
+            { name: 'Julia Fractal', source: exampleFractal, showSource: false },
             { name: 'Raymarched Cube', source: exampleRaymarcher, showSource: false },
             { name: 'Raymarched Lattice', source: exampleLattice, showSource: false }
           ]
