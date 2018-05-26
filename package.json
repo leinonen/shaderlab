@@ -7,7 +7,7 @@
     "start": "npm run dev",
     "build": "webpack -p",
     "dev": "webpack-dev-server",
-    "deploy": "npm run build && aws s3 cp public s3://shaderlab --recursive --acl public-read"
+    "deploy": "npm run build && aws s3 cp public s3://shaderlab.se --recursive --acl public-read"
   },
   "keywords": [],
   "author": "leinonen",
