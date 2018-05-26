@@ -23,6 +23,7 @@ class App extends Component {
       width: window.innerWidth,
       height: window.innerHeight
     }
+
     this.toggleEditor = this.toggleEditor.bind(this)
     this.toggleMenu = this.toggleMenu.bind(this)
     this.updateEditorText = this.updateEditorText.bind(this)
@@ -65,7 +66,14 @@ class App extends Component {
   }
 
   toggleEditor() {
-    this.setState({ showEditor: !this.state.showEditor })
+    this.setState((prevState, props) => {
+      if (prevState.showEditor === false) {
+        this.editor.focus()
+      }
+      return {
+        showEditor: !prevState.showEditor
+      }
+    })
   }
 
   toggleMenu() {
@@ -75,7 +83,6 @@ class App extends Component {
   onFullscreen() {
     let el = document.documentElement
     let rfs = el.requestFullscreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen
-
     rfs.call(el)
   }
 
@@ -95,7 +102,7 @@ class App extends Component {
   }
 
   onReset() {
-    this.setState({ 
+    this.setState({
       shaderSource: fragmentShaderSource,
       editorText: fragmentShaderSource,
     })
@@ -121,6 +128,7 @@ class App extends Component {
           onReset={this.onReset}
         />
         <Editor
+          onLoad={(editor) => { this.editor = editor; }}
           style={{ visibility: this.state.showEditor ? 'visible' : 'hidden' }}
           value={this.state.editorText}
           onChange={this.updateEditorText}
