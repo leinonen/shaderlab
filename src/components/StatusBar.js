@@ -20,11 +20,11 @@ const StatusBarWrapper = styled.div`
 `
 
 const Message = styled.div`
-  flex: 1 1 auto;
+  flex: 1 1 70%;
 `
 
 const Credz = styled.div`
-  flex: 1 1 auto;
+  flex: 1 1 30%;
   text-align: right;
 `
 
