@@ -8,6 +8,8 @@ import exampleRaymarcher from '../examples/raymarch_cube.frag'
 import exampleLattice from '../examples/lattice.frag'
 import exampleFractal from '../examples/julia.frag'
 
+import colorHsv2rgb from '../colors/hsv2rgb.glsl'
+
 import primitiveSphere from '../primitives/sphere.glsl'
 import primitiveBox from '../primitives/box.glsl'
 import primitiveTorus from '../primitives/torus.glsl'
@@ -81,6 +83,11 @@ const GroupWrapper = styled.div`
   margin-bottom: 2rem;
 `
 
+const GroupName = styled.h2`
+  margin: 0.5rem 0;
+  cursor: pointer;
+`
+
 const Item = ({ name, showSource, source, onSelectExample }) => {
   if (!showSource) {
     return (
@@ -97,11 +104,15 @@ const Item = ({ name, showSource, source, onSelectExample }) => {
   )
 }
 
-const Group = ({ name, items, onSelectExample }) => (
+const Group = ({ name, items, onSelectExample, expanded, onExpandToggle }) => (
   <GroupWrapper>
-    <h2>{name}</h2>
+    <GroupName onClick={() => onExpandToggle(name)}>
+      <span className={`fa fa-chevron-${expanded ? 'up' : 'down'}`}></span> {name}
+    </GroupName>
     {
-      items.map(item => <Item key={item.name} onSelectExample={onSelectExample} {...item} />)
+      expanded && items.map(item => (
+        <Item key={item.name} onSelectExample={onSelectExample} {...item} />
+      ))
     }
   </GroupWrapper>
 )
@@ -109,15 +120,22 @@ const Group = ({ name, items, onSelectExample }) => (
 class Menu extends Component {
   constructor(props) {
     super(props)
+    this.toggleGroup = this.toggleGroup.bind(this)
     this.state = {
       groups: [
         {
-          name: 'Example shaders',
+          name: 'Example Shaders',
           items: [
             { name: 'Plasma (Default)', source: exampleHippiePlasma, showSource: false },
             { name: 'Julia Fractal', source: exampleFractal, showSource: false },
             { name: 'Raymarched Cube', source: exampleRaymarcher, showSource: false },
             { name: 'Raymarched Lattice', source: exampleLattice, showSource: false }
+          ]
+        },
+        {
+          name: 'Color Functions',
+          items: [
+            { name: 'HSV 2 RGB', source: colorHsv2rgb, showSource: true}
           ]
         },
         {
@@ -141,6 +159,17 @@ class Menu extends Component {
     }
   }
 
+  toggleGroup(name) {
+    this.setState({
+      groups: this.state.groups.map(group => {
+        if (group.name === name) {
+          return { ...group, expanded: !group.expanded }
+        }
+        return group
+      })
+    })
+  }
+
   render() {
     const { expanded, onToggleExpanded, onEditorToggle, onSelectExample, onFullscreen, onReset } = this.props
     return (
@@ -158,22 +187,11 @@ class Menu extends Component {
               <Group
                 key={group.name}
                 onSelectExample={onSelectExample}
+                onExpandToggle={this.toggleGroup}
                 {...group}
               />
             ))
             }
-            <div>
-              <h4>Sources, credits and resources</h4>
-              <p>I did not come up with all this stuff, just wanted to make the information easily accessible when hacking.</p>
-              <ul>
-                <li><a href="http://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm">Inigo Quilez - Distance Functions</a></li>
-                <li><a href="http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions">Jamie Wong - Raymarching Distance Functions</a></li>
-                <li><a href="http://www.pouet.net/topic.php?which=7931&page=1">Pouet.net - Raymarching Toolbox Forum</a></li>
-                <li><a href="https://www.khronos.org/registry/OpenGL/specs/gl/GLSLangSpec.4.40.pdf">GLSL Specification 4.40 - PDF</a></li>
-                <li><a href="https://www.shadertoy.com">Shadertoy. Similar to this app, but more popular</a></li>
-                <li><a href="http://glslsandbox.com">GLSL Sandbox. Similar to this app, but more popular</a></li>
-              </ul>
-            </div>
           </ContentWrapper>
         </MenuWrapper>
         }
