@@ -97,7 +97,7 @@ class App extends Component {
   }
 
   onCompileSuccess() {
-    this.setState({ compileSucces: true, compileMessage: 'Compile successful. Press Ctrl + Enter to compile shader, Ctrl + Space to toggle editor.' })
+    this.setState({ compileSucces: true, compileMessage: 'Press Ctrl + Enter to compile, Ctrl + Space to toggle editor.' })
     window.localStorage.setItem('shader', this.state.shaderSource)
   }
 
