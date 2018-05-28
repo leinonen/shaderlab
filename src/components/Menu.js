@@ -9,6 +9,9 @@ import exampleLattice from '../examples/lattice.frag'
 import exampleFractal from '../examples/julia.frag'
 import exampleMetaballs from '../examples/metaballs_example.frag'
 
+import basicRaymarcher from '../basics/raymarch.glsl'
+import basicNormal from '../basics/normal.glsl'
+
 import colorHsv2rgb from '../colors/hsv2rgb.glsl'
 
 import primitiveSphere from '../primitives/sphere.glsl'
@@ -19,6 +22,7 @@ import primitivePlane from '../primitives/plane.glsl'
 import operatorIntersection from '../operators/intersection.glsl'
 import operatorUnion from '../operators/union.glsl'
 import operatorDifference from '../operators/difference.glsl'
+import operatorUnionRound from '../operators/unionRound.glsl'
 
 const MenuWrapper = styled.div`
   position: absolute;
@@ -38,6 +42,7 @@ const MenuWrapper = styled.div`
   }
   pre {
     background-color: rgba(255, 255, 255, 0.2);
+    overflow-x: auto;
   }
 `
 
@@ -93,7 +98,7 @@ const Item = ({ name, showSource, source, onSelectExample }) => {
   if (!showSource) {
     return (
       <Row>
-        <Button onClick={() => { onSelectExample(source) }}>{name}</Button>
+        <Button onClick={() => { onSelectExample(source) }}><span className="fa fa-bomb"></span> {name}</Button>
       </Row>
     )
   }
@@ -137,7 +142,14 @@ class Menu extends Component {
         {
           name: 'Color Functions',
           items: [
-            { name: 'HSV 2 RGB', source: colorHsv2rgb, showSource: true }
+            { name: 'HSV to RGB', source: colorHsv2rgb, showSource: true }
+          ]
+        },
+        {
+          name: 'Raymarching Basics',
+          items: [
+            { name: 'Raymarching', source: basicRaymarcher, showSource: true },
+            { name: 'Normal / Gradient', source: basicNormal, showSource: true }
           ]
         },
         {
@@ -154,6 +166,7 @@ class Menu extends Component {
           items: [
             { name: 'Intersection', source: operatorIntersection, showSource: true },
             { name: 'Union', source: operatorUnion, showSource: true },
+            { name: 'Union Round', source: operatorUnionRound, showSource: true },
             { name: 'Difference', source: operatorDifference, showSource: true }
           ]
         }
