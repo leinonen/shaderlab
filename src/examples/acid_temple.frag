@@ -74,6 +74,7 @@ float sdPlane( vec3 p, vec4 n ) {
 float map(vec3 p) {
   float a = PI * 2.0 * time;
   float bumps = 0.01 * sinusoidBumps(p / 1.5);
+  p.xy *= rot2( p.z * PI*2.0 * 0.03 );
   float p1 = sdPlane(p, vec4(vec3(0,1,0) + vec3(0, bumps,0), 2.0));
   float p2 = sdPlane(p, vec4(vec3(0,-1,0) + vec3(0, bumps,0), 2.0));
   vec3 p0 = p;
