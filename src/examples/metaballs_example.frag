@@ -41,7 +41,15 @@ float metaballs(vec3 p) {
 }
 
 float map(vec3 p) {
-  return fOpUnionRound(sdPlane(p, vec4(0,1,0, 1.0)), metaballs(p), 0.6);
+  return fOpUnionRound(
+    sdPlane(p, vec4(0,-1,0, 1.5)), 
+    fOpUnionRound(
+    sdPlane(p, vec4(0,1,0, 1.5)), 
+    metaballs(p), 
+    0.6
+  ),
+    0.6
+  );
 }
 
 vec3 getNormal(in vec3 p) {	
@@ -53,7 +61,7 @@ vec3 getNormal(in vec3 p) {
 }
 
 float rayMarch(vec3 ro, vec3 rd, float stepSize, float minStep, float maxStep) {
-  const int iterations = 128;
+  const int iterations = 70;
   float t = 0.0;
   for (int i = 0 ; i < iterations; i++) {
     float k = map(ro + rd * t);
