@@ -7,6 +7,7 @@ import exampleHippiePlasma from '../examples/fun_plasma.frag'
 import exampleRaymarcher from '../examples/raymarch_cube.frag'
 import exampleLattice from '../examples/lattice.frag'
 import exampleFractal from '../examples/julia.frag'
+import exampleMetaballs from '../examples/metaballs_example.frag'
 
 import colorHsv2rgb from '../colors/hsv2rgb.glsl'
 
@@ -129,13 +130,14 @@ class Menu extends Component {
             { name: 'Plasma (Default)', source: exampleHippiePlasma, showSource: false },
             { name: 'Julia Fractal', source: exampleFractal, showSource: false },
             { name: 'Raymarched Cube', source: exampleRaymarcher, showSource: false },
-            { name: 'Raymarched Lattice', source: exampleLattice, showSource: false }
+            { name: 'Raymarched Lattice', source: exampleLattice, showSource: false },
+            { name: 'Raymarched Metaballs', source: exampleMetaballs, showSource: false }
           ]
         },
         {
           name: 'Color Functions',
           items: [
-            { name: 'HSV 2 RGB', source: colorHsv2rgb, showSource: true}
+            { name: 'HSV 2 RGB', source: colorHsv2rgb, showSource: true }
           ]
         },
         {
