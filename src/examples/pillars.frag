@@ -136,7 +136,7 @@ float calculateAO(vec3 p, vec3 n) {
 
 
 vec3 rayDirection(vec2 uv, vec3 camPos, vec3 lookAt) {
-  float FOV = 0.75;
+  float FOV = 0.95;
   vec3 forward = normalize(lookAt + camPos);
   vec3 right = normalize(vec3(forward.z, 0., -forward.x ));
   vec3 up = normalize(cross(forward, right));
@@ -176,7 +176,8 @@ void main( void ) {
   float specular = pow(max( 0.0, dot(reflect(-lightDirection, normal), normalize(eyeDirection)) ), specularPower);
 
   vec3 sceneColor = vec3(0);
-  vec3 objectColor = hsv2rgb(vec3((p.x + p.z + p.y* 2.0) / 15.0, 0.8, 1.0));
+  float bumps = sinusoidBumps(p / 4.0);
+  vec3 objectColor = hsv2rgb(vec3(0.13*bumps + (p.x + p.z + p.y* 2.0) / 15.0, 1.0 - 0.4 * bumps, 1.0 - 0.3 * bumps));
   vec3 lightColor = vec3(1.0);
   sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten*ao*shadowcol;
 
