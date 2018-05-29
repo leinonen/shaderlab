@@ -85,7 +85,7 @@ float sdTorus( vec3 p, vec2 t ) {
 
 float map(vec3 p) {
   float a = PI * 2.0 * time;
-  float bumps = 0.04 * sinusoidBumps(p / 5.5);
+  float bumps = 0.03 * sinusoidBumps(p / 2.5);
   float pulse = sin(p.z*PI / 10.0 + a)*0.50;
   // bend time and space
   p.xy *= rot2( p.z * PI*2.0 * 0.04 );
@@ -198,7 +198,7 @@ void main( void ) {
   vec3 sceneColor = vec3(0);
   float bumps = sinusoidBumps(p / 14.0);
   vec3 objectColor = hsv2rgb(vec3(0.13*bumps + (p.x + p.z + p.y* 2.0) / 15.0, .4 - 0.4 * bumps, 1.0 - 0.3 * bumps));
-  vec3 lightColor = vec3(1.0);
+  vec3 lightColor = vec3(.4, 1., .5);
   sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten*ao*shadowcol;
   sceneColor += plasma(p.z*0.5 +  normal.yx * 3.0) * 0.25 * diffuse*ao*shadowcol;
 
