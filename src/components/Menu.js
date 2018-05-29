@@ -3,11 +3,11 @@ import styled from 'styled-components'
 
 import Button from './Button'
 
-import exampleHippiePlasma from '../examples/fun_plasma.frag'
-import exampleRaymarcher from '../examples/raymarch_cube.frag'
-import exampleLattice from '../examples/lattice.frag'
-import exampleFractal from '../examples/julia.frag'
-import exampleMetaballs from '../examples/metaballs_example.frag'
+import exampleHippiePlasma from '../examples/2D/fun_plasma.frag'
+import exampleRaymarcher from '../examples/raymarch/raymarch_cube.frag'
+import exampleLattice from '../examples/raymarch/lattice.frag'
+import exampleFractal from '../examples/2D/julia.frag'
+import exampleMetaballs from '../examples/raymarch/metaballs_example.frag'
 
 import basicRaymarcher from '../basics/raymarch.glsl'
 import basicNormal from '../basics/normal.glsl'

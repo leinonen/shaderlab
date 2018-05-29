@@ -6,7 +6,7 @@ import Editor from './components/Editor'
 import Menu from './components/Menu'
 import StatusBar from './components/StatusBar'
 
-import fragmentShaderSource from './examples/fun_plasma.frag'
+import fragmentShaderSource from './examples/2D/fun_plasma.frag'
 
 class App extends Component {
 
@@ -92,12 +92,18 @@ class App extends Component {
     this.setState({ menuExpanded: !this.state.menuExpanded })
   }
 
-  onCompileError(msg) {
-    this.setState({ compileSucces: false, compileMessage: msg })
+  onCompileError(compileMessage) {
+    this.setState({ 
+      compileSucces: false, 
+      compileMessage
+    })
   }
 
   onCompileSuccess() {
-    this.setState({ compileSucces: true, compileMessage: 'Press Ctrl + Enter to compile, Ctrl + Space to toggle editor.' })
+    this.setState({ 
+      compileSucces: true, 
+      compileMessage: 'Press Ctrl + Enter to compile, Ctrl + Space to toggle editor.' 
+    })
     window.localStorage.setItem('shader', this.state.shaderSource)
   }
 

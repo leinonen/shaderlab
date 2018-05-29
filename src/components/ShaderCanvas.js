@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 
 import vertexShaderSource from '../shader.vert'
-import fragmentShaderSource from '../examples/fun_plasma.frag'
+import fragmentShaderSource from '../examples/2D/fun_plasma.frag'
 
 export default class ShaderCanvas extends Component {
   constructor(props) {
