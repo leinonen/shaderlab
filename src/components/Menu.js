@@ -94,7 +94,14 @@ const GroupName = styled.h2`
   cursor: pointer;
 `
 
-const Item = ({ name, showSource, source, onSelectExample }) => {
+const Item = ({ name, showSource, source, onSelectExample, url, description }) => {
+  if (url) {
+    return (
+      <Row>
+        <p><a href={url} target="_blank">{name}</a> {description}</p>
+      </Row>
+    )
+  }
   if (!showSource) {
     return (
       <Row>
@@ -168,6 +175,51 @@ class Menu extends Component {
             { name: 'Union', source: operatorUnion, showSource: true },
             { name: 'Union Round', source: operatorUnionRound, showSource: true },
             { name: 'Difference', source: operatorDifference, showSource: true }
+          ]
+        },
+        {
+          name: 'Tutorials',
+          items: [
+            {
+              name: 'The Book of Shaders',
+              url: 'https://thebookofshaders.com',
+              description: 'This is a gentle step-by-step guide through the abstract and complex universe of Fragment Shaders.'
+            },
+            {
+              name: 'Raymarching Distance Fields',
+              url: 'http://9bitscience.blogspot.com/2013/07/raymarching-distance-fields_14.html',
+              description: 'Good tutorial about raymarching distance fields'
+            },
+            {
+              name: 'Ray Marching and Signed Distance Functions',
+              url: 'http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/',
+              description: 'Another good tutorial about raymarching distance fields'
+            }
+          ]
+        },
+        {
+          name: 'Resources',
+          items: [
+            {
+              name: 'Inigo Quilez - Articles',
+              url: 'http://www.iquilezles.org',
+              description: 'Many awesome articles about computer graphics, and shaders in particular. A gold mine of information'
+            },
+            {
+              name: 'Shadertoy',
+              url: 'https://shadertoy.com',
+              description: 'Awesome collection of shaders, made by the community'
+            },
+            {
+              name: 'GLSL Sandbox',
+              url: 'http://glslsandbox.com',
+              description: 'More shaders made by the community'
+            },
+            {
+              name: 'hg_sdf',
+              url: 'http://mercury.sexy/hg_sdf/',
+              description: 'A glsl library for building signed distance functions. By demoscene group mercury'
+            }
           ]
         }
       ]
