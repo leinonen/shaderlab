@@ -158,7 +158,7 @@ vec3 lighting(vec3 p, vec3 camPos, vec3 lightPos) {
   const float stopThreshold = 0.5;
   float shadowcol = softShadow(p, lightDirection, stopThreshold*2.0, len, 128.0);
   
-  vec3 sceneColor = vec3(.1,.1,.2);
+  vec3 sceneColor = vec3(.1,.1,.2) * 0.8;
   vec3 objectColor = hsv2rgb(vec3((p.x+p.y+p.z + time)/40.0, 1.0, 1.0)) + bumps(p/5.0) * plasma(normal.xy * p.xy * 6.0) * ao*shadowcol;
   vec3 lightColor = vec3(1.0);
   sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten*ao*shadowcol;
