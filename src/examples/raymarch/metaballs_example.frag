@@ -90,28 +90,29 @@ vec3 lighting(vec3 p, vec3 camPos, vec3 lightPos) {
   lightDirection /= len;
   float lightAtten = min(1.0 / ( 0.125*len*len ), 1.0 );
 
-  float ambient = .1;
-  float diffuse = max( 0.0, dot(normal, lightDirection) );
+  float ambient  = .1;
+  float diffuse  = max( 0.0, dot(normal, lightDirection) );
   float specularPower = 5.0;
   float specular = pow(max( 0.0, dot(reflect(-lightDirection, normal), normalize(eyeDirection)) ), specularPower);
 
-  vec3 sceneColor = vec3(0.6, 0.2, 0.5) * 0.4;
+  vec3 sceneColor  = vec3(0.6, 0.2, 0.5) * 0.4;
   vec3 objectColor = vec3(1.0, 0.1, 0.6);
-  vec3 lightColor = vec3(1.0);
+  vec3 lightColor  = vec3(1.0);
   sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten;  
   return sceneColor;
 }
 
 void main( void ) {
-  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
+  vec2 aspect = vec2(resolution.x/resolution.y, 1.0);
+  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0) * aspect;
 	
-  vec3 lookAt = vec3(0.0, 0.0, 0.0);
-  vec3 camPos = lookAt + vec3(0.0, 0.0, lookAt.z - 3.0);
+  vec3 lookAt   = vec3(0.0, 0.0, 0.0);
+  vec3 camPos   = lookAt + vec3(0.0, 0.0, lookAt.z - 3.0);
   vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 2.0);
 	
   vec3 ro = camPos; 
   vec3 rd = rayDirection(uv, camPos, lookAt);
-  vec3 p = ro + rd * rayMarch(ro, rd, 0.75, 0.01, 150.0);
+  vec3 p  = ro + rd * rayMarch(ro, rd, 0.75, 0.01, 150.0);
 
   vec3 sceneColor = lighting(p, camPos, lightPos);
 
