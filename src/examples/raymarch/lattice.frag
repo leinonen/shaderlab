@@ -20,7 +20,6 @@ float sdBox(vec3 p, vec3 b) {
 }
 
 float map(vec3 p) {
-  float a = PI * 2.0 * time;
   p = mod(p, 0.50) - 0.25;
 
   float d0 = sdBox(p, vec3(0.5, 0.015, 0.015));
