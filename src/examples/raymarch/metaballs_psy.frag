@@ -12,6 +12,8 @@ const float FOV = 0.85;
 const int marchIterations = 40;
 const int shadowIterations = 20;
 const float mergeFactor = 0.6;
+const float pillarSpacing = 6.0;
+const float pillarMerge = mergeFactor*3.0;
 
 mat2 rot2( float angle ) {
   float c = cos( angle );
@@ -58,7 +60,7 @@ float metaballs(vec3 p) {
 }
 
 float pillars(vec3 p) {
-  p.xz = mod(p.xz, 6.0) - 3.0;
+  p.xz = mod(p.xz, pillarSpacing) - 0.5 * pillarSpacing;
   return sdBox(p, vec3(.3,2.0,.3));
 }
 
@@ -74,7 +76,7 @@ float map(vec3 p) {
     ),
     mergeFactor
   );
-  return unionRound(scene, pillars(p), mergeFactor*4.0);
+  return unionRound(scene, pillars(p), pillarMerge);
 }
 
 vec3 getNormal(in vec3 p) {	
