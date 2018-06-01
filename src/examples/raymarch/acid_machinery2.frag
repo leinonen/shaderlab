@@ -137,15 +137,15 @@ float softShadow(vec3 ro, vec3 rd, float start, float end, float k){
 }
 
 float calculateAO(vec3 p, vec3 n) {
-   const float AO_SAMPLES = 5.0;
-   float r = 0.0;
-   float w = 1.0;
-   for (float i=1.0; i<=AO_SAMPLES; i++) {
-      float d0 = i * 0.3;
-      r += w * (d0 - map(p + n * d0));
-      w *= 0.5;
-   }
-   return 1.0-clamp(r,0.0,1.0);
+  const float AO_SAMPLES = 5.0;
+  float r = 0.0;
+  float w = 1.0;
+  for (float i=1.0; i<=AO_SAMPLES; i++) {
+    float d0 = i * 0.3;
+    r += w * (d0 - map(p + n * d0));
+    w *= 0.5;
+  }
+  return 1.0-clamp(r,0.0,1.0);
 }
 
 vec3 rayDirection(vec2 uv, vec3 camPos, vec3 lookAt) {
@@ -155,16 +155,7 @@ vec3 rayDirection(vec2 uv, vec3 camPos, vec3 lookAt) {
   vec3 up = normalize(cross(forward, right));
   return normalize(forward + FOV*uv.x*right + FOV*uv.y*up);
 }
-/*
-vec3 plasma(vec2 p) {
-  float px = 2.0 * p.x / (PI * 2.0);
-  float py = 2.0 * p.y / (PI * 2.0);
-  float ang = atan(p.x-0.5, p.y-0.5);
-  float c = (cos(22.0 * px + ang + time * PI) + 
-       0.5 * sin(42.0 * py + ang + time * PI)) * sin((px + py) * PI * 2.0);
-  return abs(sin(vec3(0.9,0.5,0.1) * time * PI + ang * 4.0) * c * exp(c/2.2));
-}
-*/
+
 vec3 plasma(vec2 p) {
   float px = 1.5 * p.x / (PI * 2.0);
   float py = 1.5 * p.y / (PI * 2.0);
@@ -195,27 +186,29 @@ vec3 lighing(vec3 p, vec3 camPos, vec3 lookAt) {
   vec3 sceneColor = vec3(.2, .1, .3);
   vec3 objectColor = hsv2rgb(vec3((p.x+p.y+p.z + time)/40.0, 1.0, 1.0)) + sinusoidBumps(p/5.0) * plasma(normal.xy * p.xy * 6.0) * ao*shadowcol;
   vec3 lightColor = vec3(.4, 1., .5);
+
   sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten*ao*shadowcol;
   sceneColor += plasma(p.z*0.5 +  normal.yx * 3.0) * 0.25 * diffuse*ao*shadowcol;
   return sceneColor;
 }
 
 void main( void ) {
-  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
+  vec2 aspect = vec2(resolution.x/resolution.y, 1.0);
+  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0) * aspect;
 	
-  vec3 lookAt = vec3(0, 0, time*2.);
   float cy = 0.5 * sin(PI * 2.0 * time*0.4);
+  vec3 lookAt = vec3(0, 0, time*2.);
   vec3 camPos = lookAt + vec3(0, cy, lookAt.z - 5.0);
-  lightPos = lookAt + vec3(0, cy, lookAt.z - 7.0);
+  lightPos    = lookAt + vec3(0, cy, lookAt.z - 7.0);
 	
   vec3 ro = camPos; 
   vec3 rd = rayDirection(uv, camPos, lookAt);
   rd.xz *= rot2(PI * 2.0 * time * 0.1);
   rd.yz *= rot2(PI * sin(PI * time * 0.1)/5.0);
+
   vec3 p = ro + rd * rayMarch(ro, rd, 0.75, 0.01, 20.0);
   vec3 sceneColor = lighing(p, camPos, lightPos);
 
-  vec3 col = clamp(sceneColor, 0.0, 1.0);
-  gl_FragColor = vec4(col, 1.0);
+  gl_FragColor = vec4(clamp(sceneColor, 0.0, 1.0), 1.0);
 }
 
