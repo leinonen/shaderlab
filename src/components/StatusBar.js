@@ -13,7 +13,7 @@ const StatusBarWrapper = styled.div`
   color: ${props => props.error === true ? 'yellow' : 'rgb(200, 255, 0)'};;
   padding: 0.5em;
   box-sizing: border-box;
-  font-size: 0.8em;
+  font-size: 0.7em;
   min-height: 2em;
   display: flex;
   flex-wrap: nowrap;
