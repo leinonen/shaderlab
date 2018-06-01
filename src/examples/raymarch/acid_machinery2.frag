@@ -83,21 +83,24 @@ float sdTorus( vec3 p, vec2 t ) {
   return length(q) - t.y;
 }
 
+float pillars(vec3 p, float bumps, float pulse) {
+  p.xz = mod(p.xz, 3.0) - 1.5;
+  modPolar(p.xz, 5.0);
+  float b = sdSphere(p + vec3(0,pulse,0) + bumps, 0.45);
+  float tor = sdTorus(p, vec2(0.7, 0.08) + bumps);
+  float c = sdBox(p, vec3(0.2,2.0,0.2) +bumps);
+  return unionRound(min(tor,b),c, 0.4);
+}
+
 float map(vec3 p) {
   float a = PI * 2.0 * time;
   float bumps = 0.03 * sinusoidBumps(p / 2.5);
   float pulse = sin(p.z*PI / 10.0 + a)*0.50;
   // bend time and space
   p.xy *= rot2( p.z * PI*2.0 * 0.04 );
-  float p1 = sdPlane(p, vec4(vec3(0,1,0) + vec3(0, bumps,0), 2.0));
-  float p2 = sdPlane(p, vec4(vec3(0,-1,0) + vec3(0, bumps,0), 2.0));
-  p.xz = mod(p.xz, 3.0) - 1.5;
-  modPolar(p.xz, 5.0);
-  float b = sdSphere(p + vec3(0,pulse,0) + bumps, 0.45);
-  float tor = sdTorus(p, vec2(0.7, 0.08) + bumps);
-  float c = sdBox(p, vec3(0.2,2.0,0.2) +bumps);
-  c = unionRound(min(tor,b),c, 0.4);
-  return unionRound(p1, unionRound(p2, c, 0.8), 0.8);
+  float plane1 = sdPlane(p, vec4(vec3(0, 1,0) + vec3(0, bumps,0), 2.0));
+  float plane2 = sdPlane(p, vec4(vec3(0,-1,0) + vec3(0, bumps,0), 2.0));
+  return unionRound(plane1, unionRound(plane2, pillars(p, bumps, pulse), 0.8), 0.8);
 }
 
 vec3 getNormal(in vec3 p) {	
@@ -125,10 +128,10 @@ float softShadow(vec3 ro, vec3 rd, float start, float end, float k){
   float dist = start;
   float stepDist = end/float(shadowIterations);
   for (int i=0; i<shadowIterations; i++){
-      float h = map(ro + rd*dist);
-      shade = min(shade, k*h/dist);
-      dist += min(h, stepDist*2.);
-      if (h<0.001 || dist > end) break; 
+    float h = map(ro + rd*dist);
+    shade = min(shade, k*h/dist);
+    dist += min(h, stepDist*2.);
+    if (h<0.001 || dist > end) break; 
   }
   return min(max(shade, 0.) + 0.3, 1.0); 
 }
@@ -145,7 +148,6 @@ float calculateAO(vec3 p, vec3 n) {
    return 1.0-clamp(r,0.0,1.0);
 }
 
-
 vec3 rayDirection(vec2 uv, vec3 camPos, vec3 lookAt) {
   float FOV = 0.95;
   vec3 forward = normalize(lookAt + camPos);
@@ -153,7 +155,7 @@ vec3 rayDirection(vec2 uv, vec3 camPos, vec3 lookAt) {
   vec3 up = normalize(cross(forward, right));
   return normalize(forward + FOV*uv.x*right + FOV*uv.y*up);
 }
-
+/*
 vec3 plasma(vec2 p) {
   float px = 2.0 * p.x / (PI * 2.0);
   float py = 2.0 * p.y / (PI * 2.0);
@@ -162,29 +164,24 @@ vec3 plasma(vec2 p) {
        0.5 * sin(42.0 * py + ang + time * PI)) * sin((px + py) * PI * 2.0);
   return abs(sin(vec3(0.9,0.5,0.1) * time * PI + ang * 4.0) * c * exp(c/2.2));
 }
+*/
+vec3 plasma(vec2 p) {
+  float px = 1.5 * p.x / (PI * 2.0);
+  float py = 1.5 * p.y / (PI * 2.0);
+  float ang = atan(p.x-0.5, p.y-0.5);
+  float c = (cos(42.0 * px + ang + time * PI * 0.1) + 
+       0.5 * sin(2.0 * py + ang - time * PI * 0.1));
+  return abs(sin(vec3(0.9,0.5,0.1) * time * PI*0.1 + ang * 4.0) * c * exp(c/2.2));
+}
 
-void main( void ) {
-  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
-	
-  vec3 lookAt = vec3(0, 0, time*2.);
-  float cy = 0.5 * sin(PI * 2.0 * time*0.4);
-  vec3 camPos = lookAt + vec3(0, cy, lookAt.z - 5.0);
-  lightPos = lookAt + vec3(0,cy, lookAt.z - 5.0);
-	
-  vec3 ro = camPos; 
-  vec3 rd = rayDirection(uv, camPos, lookAt);
-  rd.xz *= rot2(PI * 2.0 * time * 0.1);
-  rd.yz *= rot2(PI * sin(PI * time * 0.1)/5.0);
-  float t = rayMarch(ro, rd, 0.75, 0.01, 20.0);
-  vec3 p = ro + rd * t;
-
+vec3 lighing(vec3 p, vec3 camPos, vec3 lookAt) {
   vec3 normal = getNormal(p);
   vec3 lightDirection = lightPos - p;
   vec3 eyeDirection = camPos - p;
 
   float len = length(lightDirection);
   lightDirection /= len;
-  float lightAtten = min(1.0 / ( 0.125*len*len ), 1.0 );
+  float lightAtten = min(1.0 / ( 0.0025*len*len ), 1.0 );
 
   float ao = calculateAO(p, normal);
   const float stopThreshold = 0.05;
@@ -195,12 +192,28 @@ void main( void ) {
   float specularPower = 13.0;
   float specular = pow(max( 0.0, dot(reflect(-lightDirection, normal), normalize(eyeDirection)) ), specularPower);
 
-  vec3 sceneColor = vec3(0);
-  float bumps = sinusoidBumps(p / 14.0);
-  vec3 objectColor = hsv2rgb(vec3(0.13*bumps + (p.x + p.z + p.y* 2.0) / 15.0, .4 - 0.4 * bumps, 1.0 - 0.3 * bumps));
+  vec3 sceneColor = vec3(.2, .1, .3);
+  vec3 objectColor = hsv2rgb(vec3((p.x+p.y+p.z + time)/40.0, 1.0, 1.0)) + sinusoidBumps(p/5.0) * plasma(normal.xy * p.xy * 6.0) * ao*shadowcol;
   vec3 lightColor = vec3(.4, 1., .5);
   sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten*ao*shadowcol;
   sceneColor += plasma(p.z*0.5 +  normal.yx * 3.0) * 0.25 * diffuse*ao*shadowcol;
+  return sceneColor;
+}
+
+void main( void ) {
+  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
+	
+  vec3 lookAt = vec3(0, 0, time*2.);
+  float cy = 0.5 * sin(PI * 2.0 * time*0.4);
+  vec3 camPos = lookAt + vec3(0, cy, lookAt.z - 5.0);
+  lightPos = lookAt + vec3(0, cy, lookAt.z - 7.0);
+	
+  vec3 ro = camPos; 
+  vec3 rd = rayDirection(uv, camPos, lookAt);
+  rd.xz *= rot2(PI * 2.0 * time * 0.1);
+  rd.yz *= rot2(PI * sin(PI * time * 0.1)/5.0);
+  vec3 p = ro + rd * rayMarch(ro, rd, 0.75, 0.01, 20.0);
+  vec3 sceneColor = lighing(p, camPos, lightPos);
 
   vec3 col = clamp(sceneColor, 0.0, 1.0);
   gl_FragColor = vec4(col, 1.0);
