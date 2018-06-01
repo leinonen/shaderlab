@@ -81,18 +81,7 @@ vec3 rayDirection(vec2 uv, vec3 camPos, vec3 lookAt) {
   return normalize(forward + FOV*uv.x*right + FOV*uv.y*up);
 }
 
-void main( void ) {
-  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
-	
-  vec3 lookAt = vec3(0.0, 0.0, 0.0);
-  vec3 camPos = lookAt + vec3(0.0, 0.0, lookAt.z - 3.0);
-  vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 2.0);
-	
-  vec3 ro = camPos; 
-  vec3 rd = rayDirection(uv, camPos, lookAt);
-  float t = rayMarch(ro, rd, 0.75, 0.01, 150.0);
-  vec3 p = ro + rd * t;
-
+vec3 lighting(vec3 p, vec3 camPos, vec3 lightPos) {
   vec3 normal = getNormal(p);
   vec3 lightDirection = lightPos - p;
   vec3 eyeDirection = camPos - p;
@@ -109,7 +98,22 @@ void main( void ) {
   vec3 sceneColor = vec3(0.6, 0.2, 0.5) * 0.4;
   vec3 objectColor = vec3(1.0, 0.1, 0.6);
   vec3 lightColor = vec3(1.0);
-  sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten;
+  sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten;  
+  return sceneColor;
+}
+
+void main( void ) {
+  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
+	
+  vec3 lookAt = vec3(0.0, 0.0, 0.0);
+  vec3 camPos = lookAt + vec3(0.0, 0.0, lookAt.z - 3.0);
+  vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 2.0);
+	
+  vec3 ro = camPos; 
+  vec3 rd = rayDirection(uv, camPos, lookAt);
+  vec3 p = ro + rd * rayMarch(ro, rd, 0.75, 0.01, 150.0);
+
+  vec3 sceneColor = lighting(p, camPos, lightPos);
 
   vec3 col = clamp(sceneColor, 0.0, 1.0);
   gl_FragColor = vec4(col, 1.0);
