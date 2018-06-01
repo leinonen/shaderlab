@@ -20,6 +20,11 @@ mat2 rot2( float angle ) {
   return mat2( c, s,-s, c);
 }
 
+float unionRound(float a, float b, float r) {
+  vec2 u = max(vec2(r - a,r - b), vec2(0));
+  return max(r, min (a, b)) - length(u);
+}
+
 float sdBox(vec3 p, vec3 b) {
   vec3 d = abs(p) - b;
   return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
@@ -28,11 +33,14 @@ float sdBox(vec3 p, vec3 b) {
 float map(vec3 p) {
   float a = PI * 2.0 * time;
   p.xy *= rot2( p.z * PI*2.0 * 0.03 );
-  p = mod(p, 2.0) - 1.0;
-  p.xy *= rot2( p.z * PI*2.0 * 0.05 );
+  p = mod(p, 4.0) - 2.0;
+  p.xy *= rot2( time* PI*2.0 * 0.5 );
   // p.yz *= rot2( a/6.0 );
   //p.xz *= rot2( a/12.0 );
-  return sdBox(p, vec3(0.5, 0.1, 1.));
+  return unionRound(
+    sdBox(p, vec3(0.75, 0.225, 0.25)),
+    sdBox(p, vec3(0.25, 0.125, 1.0)), 0.6
+  );
 }
 
 vec3 getNormal(in vec3 p) {	
@@ -56,6 +64,15 @@ float rayMarch(vec3 ro, vec3 rd, float stepSize, float minStep, float maxStep) {
   return t;
 }
 
+vec3 plasma(vec2 p) {
+  float px = 1.5 * p.x / (PI * 2.0);
+  float py = 1.5 * p.y / (PI * 2.0);
+  float ang = atan(p.x-0.5, p.y-0.5);
+  float c = (cos(2.0 * px + ang + time * PI * 0.1) + 
+       0.5 * sin(2.0 * py + ang - time * PI * 0.1));
+  return abs(sin(vec3(0.9,0.5,0.1) * time * PI*0.1 + ang * 1.0) * c * exp(c/2.2));
+}
+
 vec3 rayDirection(vec2 uv, vec3 camPos, vec3 lookAt) {
   float FOV = 0.75;
   vec3 forward = normalize(lookAt - camPos);
@@ -67,7 +84,7 @@ vec3 rayDirection(vec2 uv, vec3 camPos, vec3 lookAt) {
 float softShadow(vec3 ro, vec3 rd, float start, float end, float k){
   float shade = 1.0;
   float dist = start;
-  const int shadowIterations = 30;
+  const int shadowIterations = 60;
   float stepDist = end/float(shadowIterations);
   for (int i=0; i<shadowIterations; i++){
       float h = map(ro + rd*dist);
@@ -96,12 +113,14 @@ float calculateAO(vec3 p, vec3 n) {
 void main( void ) {
   vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
 	
-  vec3 lookAt = vec3(0.0, 0.0, + time);
+  vec3 lookAt = vec3(0.0, 0.0, + time * 4.0);
   vec3 camPos = lookAt + vec3(0.0, 0.0, lookAt.z - 2.0);
-  vec3 lightPos = lookAt + vec3(0.0, 0.0, lookAt.z - 7.0);
+  vec3 lightPos = lookAt + vec3(0.0, 0.0, lookAt.z - 8.0);
 	
   vec3 ro = camPos; 
   vec3 rd = rayDirection(uv, camPos, lookAt);
+  rd.xy *= rot2(PI * 2.0 * -time * 0.1);
+  rd.xz *= rot2(sin(PI * 2.0 * -time * 0.1) * PI* 0.1);
   float t = rayMarch(ro, rd, 0.75, 0.01, 150.0);
   vec3 p = ro + rd * t;
 
@@ -111,20 +130,20 @@ void main( void ) {
 
   float len = length(lightDirection);
   lightDirection /= len;
-  float lightAtten = min(1.0 / ( 0.125*len*len ), 1.0 );
+  float lightAtten = min(1.0 / ( 0.025*len*len ), 1.0 );
 
   float ambient = .2;
   float diffuse = max( 0.0, dot(normal, lightDirection) );
   float specularPower = 3.0;
   float specular = pow(max( 0.0, dot(reflect(-lightDirection, normal), normalize(eyeDirection)) ), specularPower);
 
-  float ao = calculateAO(p, normal);
+  float ao = 0.5 + 0.5 * calculateAO(p, normal);
   const float stopThreshold = 0.05; // I'm not quite sure why, but thresholds in the order of a pixel seem to work better for me... most times. 
   float shadowcol=softShadow(p, lightDirection, stopThreshold*2.0, len, 32.0);
 
-  vec3 sceneColor = vec3(0.6, 0.2, 0.5) * 0.1;
-  vec3 objectColor = hsv2rgb(vec3(p.z/10.0, 1.0, 1.0));
-  vec3 lightColor = vec3(1.0);
+  vec3 sceneColor = vec3(0.6, 0.1, 0.9) * 0.023;
+  vec3 objectColor = hsv2rgb(vec3(p.z/10.0, 1.0, 1.0)) * plasma(normal.xy * 12.0);
+  vec3 lightColor = vec3(1.3);
   sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten*ao*shadowcol;
 
   vec3 col = clamp(sceneColor, 0.0, 1.0);
