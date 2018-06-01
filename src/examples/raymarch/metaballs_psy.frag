@@ -8,7 +8,7 @@ uniform vec2 resolution;
 #define PI 3.1415926535898
 #define EPS 0.01
 
-const float FOV = 0.65;
+const float FOV = 0.85;
 const int marchIterations = 40;
 const int shadowIterations = 20;
 const float mergeFactor = 0.6;
@@ -34,12 +34,17 @@ float sdSphere( vec3 p, float s ) {
   return length(p) - s;
 }
 
+float sdBox( vec3 p, vec3 b ) {
+  vec3 d = abs(p) - b;
+  return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
+}
+
 float sdPlane( vec3 p, vec4 n ) {
   return dot(p, n.xyz) + n.w;
 }
 
 // http://mercury.sexy/hg_sdf/
-float fOpUnionRound(float a, float b, float r) {
+float unionRound(float a, float b, float r) {
 	vec2 u = max(vec2(r - a,r - b), vec2(0));
 	return max(r, min(a, b)) - length(u);
 }
@@ -49,21 +54,27 @@ float metaballs(vec3 p) {
   float s1 = sdSphere(p + vec3(cos(a),     1.8 * sin(a),     cos(a) * 0.5), 0.4);
   float s2 = sdSphere(p + vec3(cos(3.0*a), 1.8 * sin(2.0*a), sin(a) * 0.5), 0.6);
   float s3 = sdSphere(p + vec3(cos(a),     1.8 * sin(-a),    0.7*cos(a) * 0.5), 0.8);
-  return fOpUnionRound(fOpUnionRound(s1, s2, mergeFactor), s3, mergeFactor);
+  return unionRound(unionRound(s1, s2, mergeFactor), s3, mergeFactor);
+}
+
+float pillars(vec3 p) {
+  p.xz = mod(p.xz, 6.0) - 3.0;
+  return sdBox(p, vec3(.3,2.0,.3));
 }
 
 float map(vec3 p) {
   float b = 0.03 * bumps(p / 3.);
   vec3 bs = vec3(.2,1.0,.2);
-  return fOpUnionRound(
+  float scene = unionRound(
     sdPlane(p*bs + b, vec4(0,-1,0, 1.5)), 
-    fOpUnionRound(
+    unionRound(
       sdPlane(p*bs + b, vec4(0,1,0, 1.5)), 
       metaballs(p+b), 
       mergeFactor
     ),
     mergeFactor
   );
+  return unionRound(scene, pillars(p), mergeFactor*4.0);
 }
 
 vec3 getNormal(in vec3 p) {	
@@ -146,7 +157,6 @@ vec3 lighting(vec3 p, vec3 camPos, vec3 lightPos) {
   float shadowcol = softShadow(p, lightDirection, stopThreshold*2.0, len, 128.0);
   
   vec3 sceneColor = vec3(.1,.1,.2);
-  // vec3 objectColor = vec3(1.0, 0.1, 0.6);
   vec3 objectColor = hsv2rgb(vec3((p.x+p.y+p.z + time)/40.0, 1.0, 1.0)) + bumps(p/5.0) * plasma(normal.xy * p.xy * 6.0) * ao*shadowcol;
   vec3 lightColor = vec3(1.0);
   sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten*ao*shadowcol;
@@ -159,11 +169,12 @@ void main( void ) {
 	
   vec3 lookAt   = vec3(0, 0, 0);
   vec3 camPos   = lookAt + vec3(0, 0, lookAt.z - 3.5);
-  vec3 lightPos = lookAt + vec3(.5, .5, lookAt.z - 2.0);
+  vec3 lightPos = lookAt + vec3(.5, .5, lookAt.z - 1.0);
 
   vec3 ro = camPos; 
   vec3 rd = rayDirection(uv, camPos, lookAt);
   rd.xy *= rot2(sin(PI * 2.0 * time * 0.05) / 3.0);
+  rd.yz *= rot2(sin(PI * 2.0 * time * 0.05) / 6.0);
   vec3 p  = ro + rd * rayMarch(ro, rd, 0.75, 0.01, 150.0);
   vec3 col = lighting(p, camPos, lightPos);
 
