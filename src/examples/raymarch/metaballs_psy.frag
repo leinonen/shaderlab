@@ -53,10 +53,15 @@ float unionRound(float a, float b, float r) {
 
 float metaballs(vec3 p) {
   float a = PI * 2.0 * time * 0.06;
-  float s1 = sdSphere(p + vec3(cos(a),     1.8 * sin(a),     cos(a) * 0.5), 0.4);
-  float s2 = sdSphere(p + vec3(cos(3.0*a), 1.8 * sin(2.0*a), sin(a) * 0.5), 0.6);
-  float s3 = sdSphere(p + vec3(cos(a),     1.8 * sin(-a),    0.7*cos(a) * 0.5), 0.8);
-  return unionRound(unionRound(s1, s2, mergeFactor), s3, mergeFactor);
+  float s1 = sdSphere(p + vec3(cos(a),     1.8 * sin(a),            cos(a) *  0.6), 0.4);
+  float s2 = sdSphere(p + vec3(cos(3.0*a), 1.8 * sin(2.0*a),        sin(a) *  0.6), 0.6);
+  float s3 = sdSphere(p + vec3(cos(a),     1.8 * sin(-a),       0.7*cos(a) *  0.7), 0.8);
+  float s4 = sdSphere(p + vec3(2.5*cos(-a),2.1 * sin(-a * 3.0), 0.7*cos(-a) * 0.5), 0.7);
+  return unionRound(
+    unionRound(s1, s2, mergeFactor), 
+    unionRound(s3, s4, mergeFactor),
+    mergeFactor
+  );
 }
 
 float pillars(vec3 p) {
@@ -122,9 +127,10 @@ vec3 plasma(vec2 p) {
   float px = 1.5 * p.x / (PI * 2.0);
   float py = 1.5 * p.y / (PI * 2.0);
   float ang = atan(p.x-0.5, p.y-0.5);
-  float c = (cos(42.0 * px + ang + time * PI * 0.1) + 
-       0.5 * sin(2.0 * py + ang - time * PI * 0.1));
-  return abs(sin(vec3(0.9,0.5,0.1) * time * PI*0.1 + ang * 4.0) * c * exp(c/2.2));
+  float offs = time * PI * 0.1;
+  float c = (cos(42.0 * px + ang + offs) + 
+       0.5 * sin(2.0 * py + ang - offs));
+  return (sin(vec3(0.9,0.5,0.1) * offs + ang * 4.0) * c * exp(c/2.2));
 }
 
 float softShadow(vec3 ro, vec3 rd, float start, float end, float k){
@@ -137,7 +143,7 @@ float softShadow(vec3 ro, vec3 rd, float start, float end, float k){
       dist += min(h, stepDist*2.);
       if (h<0.001 || dist > end) break; 
   }
-  return min(max(shade, 0.) + 0.3, 1.0); 
+  return min(max(shade, 0.) + 0.5, 1.0); 
 }
 
 vec3 lighting(vec3 p, vec3 camPos, vec3 lightPos) {
