@@ -44,10 +44,10 @@ float map(vec3 p) {
   return fOpUnionRound(
     sdPlane(p, vec4(0,-1,0, 1.5)), 
     fOpUnionRound(
-    sdPlane(p, vec4(0,1,0, 1.5)), 
-    metaballs(p), 
-    0.6
-  ),
+      sdPlane(p, vec4(0,1,0, 1.5)), 
+      metaballs(p), 
+      0.6
+    ),
     0.6
   );
 }
@@ -116,6 +116,5 @@ void main( void ) {
 
   vec3 sceneColor = lighting(p, camPos, lightPos);
 
-  vec3 col = clamp(sceneColor, 0.0, 1.0);
-  gl_FragColor = vec4(col, 1.0);
+  gl_FragColor = vec4(clamp(sceneColor, 0.0, 1.0), 1.0);
 }

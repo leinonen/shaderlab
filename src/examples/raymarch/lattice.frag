@@ -82,10 +82,11 @@ vec3 lighting(vec3 p, vec3 camPos, vec3 lightPos) {
 }
 
 void main( void ) {
-  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
+  vec2 aspect = vec2(resolution.x/resolution.y, 1.0);
+  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0) * aspect;
 	
-  vec3 lookAt = vec3(0.0, 0.0, -time);
-  vec3 camPos = lookAt + vec3(0.0, 0.0, lookAt.z - 2.5);
+  vec3 lookAt   = vec3(0.0, 0.0, -time);
+  vec3 camPos   = lookAt + vec3(0.0, 0.0, lookAt.z - 2.5);
   vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 7.0);
 	
   vec3 ro = camPos; 
@@ -97,6 +98,5 @@ void main( void ) {
 
   vec3 sceneColor = lighting(p, camPos, lightPos);
 
-  vec3 col = clamp(sceneColor, 0.0, 1.0);
-  gl_FragColor = vec4(col, 1.0);
+  gl_FragColor = vec4(clamp(sceneColor, 0.0, 1.0), 1.0);
 }

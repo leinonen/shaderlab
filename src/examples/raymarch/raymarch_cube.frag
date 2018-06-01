@@ -93,6 +93,5 @@ void main( void ) {
   vec3 p = ro + rd * rayMarch(ro, rd, 0.75, 0.01, 150.0);
   vec3 sceneColor = lighting(p, camPos, lightPos);
 
-  vec3 col = clamp(sceneColor, 0.0, 1.0);
-  gl_FragColor = vec4(col, 1.0);
+  gl_FragColor = vec4(clamp(sceneColor, 0.0, 1.0), 1.0);
 }
