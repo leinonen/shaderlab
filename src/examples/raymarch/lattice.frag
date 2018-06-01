@@ -20,11 +20,12 @@ float sdBox(vec3 p, vec3 b) {
 }
 
 float map(vec3 p) {
-  p = mod(p, 0.50) - 0.25;
-
-  float d0 = sdBox(p, vec3(0.5, 0.015, 0.015));
-  float d1 = sdBox(p, vec3(0.015, 0.5, 0.015));
-  float d2 = sdBox(p, vec3(0.015, 0.015, 0.5)); 
+  float a = PI * 2.0 * time;
+  p = mod(p, 1.0) - 0.5;
+  float size = 0.05;
+  float d0 = sdBox(p, vec3(0.5,  size, size));
+  float d1 = sdBox(p, vec3(size, 0.5,  size));
+  float d2 = sdBox(p, vec3(size, size, 0.5)); 
   return min(min(d0, d1), d2);
 }
 
@@ -71,9 +72,9 @@ vec3 lighting(vec3 p, vec3 camPos, vec3 lightPos) {
   float specularPower = 3.0;
   float specular = pow(max( 0.0, dot(reflect(-lightDirection, normal), normalize(eyeDirection)) ), specularPower);
 
-  vec3 sceneColor = vec3(0.2, 0.3, 0.4) * 0.4;
+  vec3 sceneColor  = vec3(0.2, 0.3, 0.4) * 0.4;
   vec3 objectColor = vec3(0.0, 1.0, 0.0);
-  vec3 lightColor = vec3(1.0);
+  vec3 lightColor  = vec3(1.0);
   sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten;
   return sceneColor;
 }
@@ -81,8 +82,8 @@ vec3 lighting(vec3 p, vec3 camPos, vec3 lightPos) {
 void main( void ) {
   vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
 	
-  vec3 lookAt = vec3(0.0, 0.0, -time);
-  vec3 camPos = lookAt + vec3(0.0, 0.0, lookAt.z - 2.5);
+  vec3 lookAt   = vec3(0.0, 0.0, -time);
+  vec3 camPos   = lookAt + vec3(0.0, 0.0, lookAt.z - 2.5);
   vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 7.0);
 	
   vec3 ro = camPos; 
