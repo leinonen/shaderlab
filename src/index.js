@@ -8,6 +8,8 @@ import StatusBar from './components/StatusBar'
 
 import fragmentShaderSource from './examples/2D/fun_plasma.frag'
 
+const ScaleFactor = 0.5
+
 class App extends Component {
 
   constructor(props) {
@@ -119,8 +121,8 @@ class App extends Component {
     return (
       <div>
         <ShaderCanvas
-          width={this.state.width}
-          height={this.state.height}
+          width={this.state.width * ScaleFactor}
+          height={this.state.height * ScaleFactor}
           shader={this.state.shaderSource}
           onCompileSuccess={this.onCompileSuccess}
           onCompileError={this.onCompileError}

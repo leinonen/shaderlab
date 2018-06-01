@@ -115,6 +115,8 @@ export default class ShaderCanvas extends Component {
       gl.enableVertexAttribArray(this.positionLocation);
       gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
 
+      gl.enable(gl.SAMPLE_COVERAGE);
+      gl.sampleCoverage(0.5, false);
     } catch (e) {
       console.log('fiasko')
     }
