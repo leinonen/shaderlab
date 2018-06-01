@@ -7,6 +7,8 @@ uniform vec2 resolution;
 
 #define PI 3.1415926535898
 #define EPS 0.005
+  
+const float FOV = 0.75;
 
 mat2 rot2( float angle ) {
   float c = cos( angle );
@@ -114,57 +116,67 @@ float calculateAO(vec3 p, vec3 n) {
    return 1.0-clamp(r,0.0,1.0);
 }
 
-void main( void ) {
-  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
-	
-  vec3 lookAt = vec3(0.0, 0.0, 0.0);
-  vec3 camPos = lookAt + vec3(0.0, 0.0, lookAt.z - 3.0);
-  vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 2.0);
-	
+float rayMarch(vec3 ro, vec3 rd, float stepSize, float clipNear, float clipFar) {
+  const int iterations = 40;
+  float t = 0.0;
+  for (int i = 0 ; i < iterations; i++) {
+    float k = map(ro + rd * t);
+    t += k * stepSize;
+    if ((k < clipNear) || (t > clipFar)) {
+      break;
+    }
+  }
+  return t;
+}
+
+vec3 rayDirection(vec2 uv, vec3 camPos, vec3 lookAt) {
   vec3 forward = normalize(lookAt - camPos);
   vec3 right = normalize(vec3(forward.z, 0., -forward.x ));
   vec3 up = normalize(cross(forward, right));
-		
-  float FOV = 0.75;
+  return normalize(forward + FOV*uv.x*right + FOV*uv.y*up);
+}
 
-  vec3 ro = camPos; 
-  vec3 rd = normalize(forward + FOV*uv.x*right + FOV*uv.y*up);
-	
-  float t = 0.0;
 
-  for (int i = 0 ; i < 128; i++) {
-    float k = map(ro + rd * t);
-    t += k * 0.75;
-    if ((k < 0.01) || (t>150.)){ break; }
-  }
-	
-  vec3 sp = ro + rd * t;
-
-  vec3 surfNormal = getNormal(sp);
-  vec3 ld = lightPos - sp;
+vec3 lighting(vec3 p, vec3 camPos, vec3 lightPos) {
+  vec3 surfNormal = getNormal(p);
+  vec3 ld = lightPos - p;
 
   float len = length( ld );
   ld /= len;
   float lightAtten = min( 1.0 / ( 0.125*len*len ), 1.0 );
 
   vec3 ref = reflect(-ld, surfNormal);
-  float ao = calculateAO(sp, surfNormal);
+  float ao = calculateAO(p, surfNormal);
 	
   float ambient = .1;
   float specularPower = 18.0;
   float diffuse = max( 0.0, dot(surfNormal, ld) );
-  float specular = max( 0.0, dot( ref, normalize(camPos-sp)) );
+  float specular = max( 0.0, dot( ref, normalize(camPos - p)) );
   specular = pow(specular, specularPower);
   const float stopThreshold = 0.05; // I'm not quite sure why, but thresholds in the order of a pixel seem to work better for me... most times. 
 
-  float shadowcol=softShadow(sp, ld, stopThreshold*2.0, len, 32.0);
+  float shadowcol = softShadow(p, ld, stopThreshold*2.0, len, 32.0);
 	
   vec3 sceneColor = vec3(.01,.01,.06);
   // vec3 objColor = hsv2rgb(vec3(sp.x/13.0, .7, 1.0));
-  vec3 objColor = getSceneColor(sp);
+  vec3 objColor = getSceneColor(p);
   vec3 lightColor = vec3(1.0);
   sceneColor += (objColor*(diffuse*0.8+ambient)+specular*0.5)*lightColor*lightAtten*ao * shadowcol;
+  return sceneColor;
+}
 
-  vec3 col = clamp(sceneColor, 0.0, 1.0);
-  gl_FragColor = vec4(col, 1.0);
+void main( void ) {
+  vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0)*vec2(resolution.x/resolution.y, 1.0);
+	
+  vec3 lookAt = vec3(0.0, 0.0, 0.0);
+  vec3 camPos = lookAt + vec3(0.0, 0.0, lookAt.z - 3.0);
+  vec3 lightPos = lookAt + vec3(0.0, 1.0, lookAt.z - 2.0);
+
+  vec3 ro = camPos; 
+  vec3 rd = rayDirection(uv, camPos, lookAt);
+	
+  vec3 p = ro + rd * rayMarch(ro, rd, 0.75, 0.01, 150.0);
+
+  vec3 sceneColor = lighting(p, camPos, lightPos);
+  gl_FragColor = vec4(clamp(sceneColor, 0.0, 1.0), 1.0);
 }
