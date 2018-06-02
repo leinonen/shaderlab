@@ -11,6 +11,7 @@ const GroupWrapper = styled.div`
 const GroupName = styled.h2`
   margin: 0.5rem 0;
   cursor: pointer;
+  font-size: 1.2rem;
 `
 
 const Group = ({ name, expanded, onExpandToggle, children }) => (
