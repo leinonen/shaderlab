@@ -9,7 +9,8 @@ uniform vec2 resolution;
 #define EPS 0.005
 
 const float FOV = 0.85;
-const int rayMarchIterations = 60;
+const int rayMarchIterations = 20;
+const int shadowIterations = 20; // increase if you have a powerful computer :)
 
 mat2 rot2( float angle ) {
   float c = cos( angle );
@@ -60,10 +61,7 @@ vec3 plasma(vec2 p) {
 }
 
 vec3 colorize(vec2 n) {
-  // p /= 2.0;
-  // return vec3(.2, .4, .6) * 0.5 *cos(p.y*PI+time*PI*0.03) + 0.5 *sin(p.y*PI+time*PI*0.003);
   return clamp(plasma(n), 0.0, 1.0)*0.5 + vec3(.4,.1,.5);
-  // return vec3(1);
 }
 
 float pillar(vec3 p) {
@@ -77,8 +75,8 @@ float pillar(vec3 p) {
 
 float map(vec3 p) {
   float room = min(sdPlane(p, vec4(0,1,0,2)+ 0.01 * bumps(p/4.)), sdPlane(p, vec4(0,-1,0,2)+ 0.01 * bumps(p/4.0)));
-  room = unionRound(room, sdPlane(p, vec4(0,0,-1,4)+ 0.01 * bumps(p/4.)), 1.5);
-  return min(room, pillar(p));
+  room = unionRound(room, sdPlane(p, vec4(0,0,-1,4)+ 0.01 * bumps(p/4.)), .5);
+  return unionRound(room, pillar(p), 1.2);
 }
 
 vec3 getNormal(in vec3 p) {	
@@ -108,6 +106,19 @@ vec3 rayDirection(vec2 uv, vec3 camPos, vec3 lookAt) {
   return normalize(forward + FOV*uv.x*right + FOV*uv.y*up);
 }
 
+float softShadow(vec3 ro, vec3 rd, float start, float end, float k){
+  float shade = 1.0;
+  float dist = start;
+  float stepDist = end/float(shadowIterations);
+  for (int i=0; i<shadowIterations; i++){
+      float h = map(ro + rd*dist);
+      shade = min(shade, k*h/dist);
+      dist += min(h, stepDist*2.);
+      if (h<0.001 || dist > end) break; 
+  }
+  return min(max(shade, 0.) + 0.5, 1.0); 
+}
+
 float calculateAO(vec3 p, vec3 n) {
    const float AO_SAMPLES = 5.0;
    float r = 0.0;
@@ -134,11 +145,14 @@ vec3 lighting(vec3 p, vec3 camPos, vec3 lightPos) {
   float specularPower = 13.0;
   float specular = pow(max( 0.0, dot(reflect(-lightDirection, normal), normalize(eyeDirection)) ), specularPower);
 
+  const float stopThreshold = 0.5;
+  float shadowCol = softShadow(p, lightDirection, stopThreshold*2.0, len, 128.0);
+
   vec3 objectColor = colorize(normal.xz);
   vec3 sceneColor  = vec3(0);
   vec3 lightColor  = vec3(1.2);
 
-  sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten*ao;
+  sceneColor += (objectColor*(diffuse*0.8+ambient)+specular*0.2)*lightColor*lightAtten*ao*shadowCol;
   return sceneColor;  
 }
 
@@ -147,8 +161,8 @@ void main( void ) {
   vec2 uv = (2.0*gl_FragCoord.xy/resolution.xy - 1.0) * aspect;
 	
   vec3 lookAt   = vec3(0.0, 0.0, 0.0);
-  vec3 camPos   = lookAt + vec3(0.0, 0.0, lookAt.z - 2.0);
-  vec3 lightPos = lookAt + vec3(0.1, 1.0, lookAt.z - 3.0);
+  vec3 camPos   = lookAt + vec3(2. * sin(time*PI*-0.1), sin(time*PI*-0.1), lookAt.z - 3.0);
+  vec3 lightPos = lookAt + vec3(3. * sin(time*PI*0.1), -0.7, lookAt.z - 3.0);
 	
   vec3 ro = camPos; 
   vec3 rd = rayDirection(uv, camPos, lookAt);
