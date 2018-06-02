@@ -62,7 +62,6 @@ export default class ShaderCanvas extends Component {
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       let msg = gl.getShaderInfoLog(shader).split('\n')[0]
       this.props.onCompileError(msg);
-      // console.log(msg)
       return null;
     }
     return shader;
@@ -102,11 +101,6 @@ export default class ShaderCanvas extends Component {
       this.timeLocation = gl.getUniformLocation(program, 'time');
       gl.uniform1f(this.timeLocation, this.time);
 
-      // infoMessage('Shader compiled successfully. Press Ctrl + Enter to save, Ctrl + Space to toggle editor')
-      // setTimeout(() => {
-      //  infoMessage('Press Ctrl + Enter to save, Ctrl + Space to toggle editor')
-      //}, 5000)
-      // let gl = this.gl
       let buffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
