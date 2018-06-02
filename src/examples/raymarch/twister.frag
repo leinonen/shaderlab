@@ -116,7 +116,7 @@ float softShadow(vec3 ro, vec3 rd, float start, float end, float k){
       dist += min(h, stepDist*2.);
       if (h<0.001 || dist > end) break; 
   }
-  return min(max(shade, 0.) + 0.5, 1.0); 
+  return min(max(shade, 0.) + 0.2, 1.0); 
 }
 
 float calculateAO(vec3 p, vec3 n) {
