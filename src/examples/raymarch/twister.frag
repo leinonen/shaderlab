@@ -9,7 +9,7 @@ uniform vec2 resolution;
 #define EPS 0.005
 
 const float FOV = 0.85;
-const int rayMarchIterations = 20;
+const int rayMarchIterations = 40;
 const int shadowIterations = 20; // increase if you have a powerful computer :)
 
 mat2 rot2( float angle ) {
