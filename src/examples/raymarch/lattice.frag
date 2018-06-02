@@ -8,6 +8,8 @@ uniform vec2 resolution;
 #define PI 3.1415926535898
 #define EPS 0.005
 
+const int marchIterations = 128;
+
 mat2 rot2( float angle ) {
   float c = cos( angle );
   float s = sin( angle );
@@ -40,9 +42,8 @@ vec3 getNormal(in vec3 p) {
 }
 
 float rayMarch(vec3 ro, vec3 rd, float stepSize, float clipNear, float clipFar) {
-  const int iterations = 128;
   float t = 0.0;
-  for (int i = 0 ; i < iterations; i++) {
+  for (int i = 0 ; i < marchIterations; i++) {
     float k = map(ro + rd * t);
     t += k * stepSize;
     if ((k < clipNear) || (t > clipFar)) {

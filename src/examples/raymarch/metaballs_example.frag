@@ -8,6 +8,9 @@ uniform vec2 resolution;
 #define PI 3.1415926535898
 #define EPS 0.005
 
+const int marchIterations = 70;
+const float mergeFactor = 0.4;
+
 mat2 rot2( float angle ) {
   float c = cos( angle );
   float s = sin( angle );
@@ -22,14 +25,12 @@ float sdPlane( vec3 p, vec4 n ) {
   return dot(p, n.xyz) + n.w;
 }
 
-// http://mercury.sexy/hg_sdf/
-float fOpUnionRound(float a, float b, float r) {
+float unionRound(float a, float b, float r) {
 	vec2 u = max(vec2(r - a,r - b), vec2(0));
 	return max(r, min (a, b)) - length(u);
 }
 
 float metaballs(vec3 p) {
-  float mergeFactor = 0.4;
   float a = PI * 2.0 * time * 0.06;
   p.xy *= rot2( a/4.0 );
   p.yz *= rot2( a/6.0 );
@@ -37,13 +38,13 @@ float metaballs(vec3 p) {
   float s1 = sdSphere(p + vec3(cos(a),     sin(a),     cos(a) * 0.5), 0.4);
   float s2 = sdSphere(p + vec3(cos(3.0*a), sin(2.0*a), sin(a) * 0.5), 0.6);
   float s3 = sdSphere(p + vec3(cos(a),     sin(-a),    cos(a) * 0.5), 0.8);
-  return fOpUnionRound(fOpUnionRound(s1, s2, mergeFactor), s3, mergeFactor);
+  return unionRound(unionRound(s1, s2, mergeFactor), s3, mergeFactor);
 }
 
 float map(vec3 p) {
-  return fOpUnionRound(
+  return unionRound(
     sdPlane(p, vec4(0,-1,0, 1.5)), 
-    fOpUnionRound(
+    unionRound(
       sdPlane(p, vec4(0,1,0, 1.5)), 
       metaballs(p), 
       0.6
@@ -61,9 +62,8 @@ vec3 getNormal(in vec3 p) {
 }
 
 float rayMarch(vec3 ro, vec3 rd, float stepSize, float clipNear, float clipFar) {
-  const int iterations = 70;
   float t = 0.0;
-  for (int i = 0 ; i < iterations; i++) {
+  for (int i = 0 ; i < marchIterations; i++) {
     float k = map(ro + rd * t);
     t += k * stepSize;
     if ((k < clipNear) || (t > clipFar)) {
