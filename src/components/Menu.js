@@ -24,7 +24,7 @@ const MenuBackground = styled.div`
   @media screen and (max-width: 768px) {
     width: 100%;
   }
-  background-color: ${props => props.expanded ? 'rgba(10,10,10,0.9)' : 'transparent'};
+  background-color: ${props => props.expanded ? 'rgba(10,10,10,0.4)' : 'transparent'};
   transition: all 0.5s ease;
 `
 

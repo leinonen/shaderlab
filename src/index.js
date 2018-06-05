@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
 import { Provider, connect } from 'react-redux'
 
-import setupStore from './store'
+import setupStore from './store/index'
 
 import ShaderCanvas from './components/ShaderCanvas'
 import Editor from './components/Editor'
@@ -11,21 +11,9 @@ import Navigation from './components/Navigation'
 import Toolbox from './components/Toolbox'
 import Config from './components/Config'
 
-import {
-  compileSuccess,
-  compileError,
-  toggleEditor,
-  toggleConfig,
-  toggleToolbox,
-  collapseMenus,
-  setShaderSource,
-  setEditorSource,
-  reset,
-  selectExample,
-  scale1x,
-  scale2x,
-  scale4x
-} from './actions'
+import { toggleEditor, toggleConfig, toggleToolbox, collapseMenus } from './store/app/actions'
+import { compileSuccess, compileError, setShaderSource, setEditorSource, reset, selectExample } from './store/editor/actions'
+import { scale1x, scale2x, scale4x } from './store/config/actions'
 
 class App extends Component {
   constructor(props) {
@@ -39,7 +27,7 @@ class App extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.showEditor && this.props.showEditor !== nextProps.showEditor) {
+    if (nextProps.app.showEditor && this.props.app.showEditor !== nextProps.app.showEditor) {
       this.editor.focus()
     }
   }
@@ -56,7 +44,7 @@ class App extends Component {
         this.props.toggleEditor()
       }
       if (e.ctrlKey && e.code === 'Enter') {
-        this.props.setShaderSource(this.props.editorSource)
+        this.props.setShaderSource(this.props.editor.editorSource)
       }
     })
   }
@@ -67,7 +55,7 @@ class App extends Component {
   }
 
   onFullscreen() {
-    this.setState({fullscreen: !this.state.fullscreen}, () => {
+    this.setState({ fullscreen: !this.state.fullscreen }, () => {
       if (this.state.fullscreen) {
         let el = document.documentElement
         let rfs = el.requestFullscreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen
@@ -81,13 +69,14 @@ class App extends Component {
 
   render() {
     const { width, height } = this.state
-    const isError = this.props.compileSuccess === false
+    const {app, editor, config} = this.props
+    const isError = editor.compileSuccess === false
     return (
       <div>
         <ShaderCanvas
-          width={width * this.props.scaling}
-          height={height * this.props.scaling}
-          shader={this.props.shaderSource}
+          width={width * config.scaling}
+          height={height * config.scaling}
+          shader={editor.shaderSource}
           onCompileSuccess={this.props.compileSuccess}
           onCompileError={this.props.compileError}
         />
@@ -100,21 +89,21 @@ class App extends Component {
         />
         <Editor
           onLoad={(editor) => { this.editor = editor; }}
-          style={{ visibility: this.props.showEditor ? 'visible' : 'hidden' }}
-          value={this.props.editorSource}
+          style={{ visibility: app.showEditor ? 'visible' : 'hidden' }}
+          value={editor.editorSource}
           onChange={this.props.setEditorSource}
           width={`${width}`}
           height={`${height}`}
           focus={true}
         />
-        <StatusBar error={isError}>{this.props.compileMessage}</StatusBar>
+        <StatusBar error={isError}>{editor.compileMessage}</StatusBar>
         <Toolbox
-          expanded={this.props.showToolbox}
+          expanded={app.showToolbox}
           onSelectExample={this.props.selectExample}
         />
         <Config
-          expanded={this.props.showConfig}
-          scaling={this.props.scaling}
+          expanded={app.showConfig}
+          scaling={config.scaling}
           scale1x={this.props.scale1x}
           scale2x={this.props.scale2x}
           scale4x={this.props.scale4x}
@@ -124,12 +113,7 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    ...state
-  }
-}
-
+const mapStateToProps = (state) => state
 const mapDispatchToProps = {
   compileSuccess,
   compileError,
