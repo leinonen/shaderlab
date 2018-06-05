@@ -41,7 +41,7 @@ const MenuBackground = styled.div`
   top: 0;
   bottom: 0;
   right: 0;
-  width: ${props => props.expanded ? '60%' : '0'};
+  width: ${props => props.expanded ? '40rem' : '0'};
   @media screen and (max-width: 768px) {
     width: 100%;
   }
@@ -55,7 +55,7 @@ const MenuWrapper = styled.div`
   top: 0;
   bottom: 0;
   right: 0;
-  width: 60%;
+  width: 40rem;
   background-color: rgba(10,10,10, 0.9);
   @media screen and (max-width: 768px) {
     width: 100%;
