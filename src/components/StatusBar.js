@@ -17,6 +17,9 @@ const StatusBarWrapper = styled.div`
   min-height: 2em;
   display: flex;
   flex-wrap: nowrap;
+  @media screen and (max-width: 768px) {
+  display: none; 
+  }
 `
 
 const Message = styled.div`
@@ -30,8 +33,8 @@ const Credz = styled.div`
 
 const StatusBar = (props) => (
   <StatusBarWrapper {...props}>
-  <Message>{props.children}</Message>
-  <Credz>{pkgJson.name}/{pkgJson.version} by {pkgJson.author}</Credz>
+    <Message>{props.children}</Message>
+    <Credz>{pkgJson.name}/{pkgJson.version} by {pkgJson.author}</Credz>
   </StatusBarWrapper>
 )
 

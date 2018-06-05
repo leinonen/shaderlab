@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import Button from './Button'
+import Button, { ButtonLink } from './Button'
+import Icon from './Icon'
 
 const ButtonWrapper = styled.div`
   position: absolute;
@@ -9,6 +10,12 @@ const ButtonWrapper = styled.div`
   right: 1rem;
   display: flex;
   justify-content: flex-end;
+  @media screen and (max-width: 768px) {
+    background: rgba(10, 10, 10, 0.9);
+    left: 0;
+    right: 0;
+    padding-bottom: 1rem;
+  }
   & > button {
     flex: 0 0 auto;
     flex-wrap: nowrap;
@@ -18,13 +25,24 @@ const ButtonWrapper = styled.div`
   }
 `
 
-function Navigation({ onToggleExpanded, onEditorToggle, onSelectExample, onFullscreen, onReset }) {
+function Navigation({ onToggleToolbox, onEditorToggle, onSelectExample, onFullscreen, onReset, onToggleConfig }) {
   return (
     <ButtonWrapper>
-      <Button title="Factory Reset" onClick={onReset}><span className="fa fa-trash-alt"></span></Button>
-      <Button title="Toolbox" onClick={onToggleExpanded}><span className="fa fa-toolbox"></span></Button>
-      <Button title="Toggle Editor (Ctrl + Space)" onClick={onEditorToggle}><span className="fa fa-edit"></span></Button>
-      <Button title="Fullscreen" onClick={onFullscreen}><span className="fa fa-expand-arrows-alt"></span></Button>
+      <Button title="Factory Reset" onClick={onReset}>
+        <Icon name="trash-alt" />
+      </Button>
+      <Button title="Config" onClick={onToggleConfig}>
+        <Icon name="cog" />
+      </Button>
+      <Button title="Toolbox" onClick={onToggleToolbox}>
+        <Icon name="toolbox" />
+      </Button>
+      <Button title="Toggle Editor (Ctrl + Space)" onClick={onEditorToggle}>
+        <Icon name="edit" />
+      </Button>
+      <Button title="Fullscreen" onClick={onFullscreen}>
+        <Icon name="expand-arrows-alt" />
+      </Button>
     </ButtonWrapper>
   )
 }

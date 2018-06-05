@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 
 import vertexShaderSource from '../shader.vert'
-import fragmentShaderSource from '../examples/2D/fun_plasma.frag'
 
 export default class ShaderCanvas extends Component {
   constructor(props) {
@@ -10,14 +9,15 @@ export default class ShaderCanvas extends Component {
   }
 
   componentDidMount() {
-    this.gl = (ReactDOM).findDOMNode(this).getContext('webgl');
-    this.canvas = (ReactDOM).findDOMNode(this)
+    this.gl = ReactDOM.findDOMNode(this).getContext('webgl');
+    this.canvas = ReactDOM.findDOMNode(this)
     this.canvas.width = this.props.width
     this.canvas.height = this.props.height
     this.time = 0;
     this.fps = 0
     this.fpstime = 0
-    this.compile()
+    this.success = false
+    this.compile(this.props.shader)
     this.paint()
   }
 
@@ -25,13 +25,8 @@ export default class ShaderCanvas extends Component {
     return false;
   }
 
-  componentWillUnmount() {
-    window.removeEventListener(this.onReSize)
-  }
-
   componentWillReceiveProps(nextProps) {
     if (this.props.shader !== nextProps.shader) {
-      // console.log('nextprops.shader', nextProps.shader)
       this.compile(nextProps.shader)
     }
     if (this.props.width !== nextProps.width || this.props.height !== nextProps.height) {
@@ -68,10 +63,6 @@ export default class ShaderCanvas extends Component {
   }
 
   compile(source) {
-    if (!source) {
-      source = window.localStorage.getItem('shader') || fragmentShaderSource
-    }
-
     let gl = this.gl
     try {
       let vertexShader = this.getShader(gl, 'vertex', vertexShaderSource);
@@ -91,7 +82,7 @@ export default class ShaderCanvas extends Component {
         return;
       }
 
-      this.props.onCompileSuccess();
+      this.props.onCompileSuccess(source);
 
       gl.useProgram(program);
 
@@ -112,12 +103,18 @@ export default class ShaderCanvas extends Component {
       gl.enable(gl.SAMPLE_COVERAGE);
       gl.sampleCoverage(0.5, false);
     } catch (e) {
-      console.log('fiasko')
+      console.log('failed to compile shader')
+      this.success = false
     }
+    console.log('compile successful')
     this.start = Date.now();
+    this.success = true
   }
 
   paint() {
+    if (!this.success) {
+      return;
+    }
     let elapsedtime = (Date.now() - this.start) / 1000.0;
     let framespeed = 1.0;
     const gl = this.gl
