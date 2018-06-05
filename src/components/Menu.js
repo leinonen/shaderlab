@@ -13,27 +13,6 @@ import Example from './Example'
 import Snippet from './Snippet'
 import Link from './Link'
 
-import exampleHippiePlasma from '../examples/2D/fun_plasma.frag'
-import exampleRaymarcher from '../examples/raymarch/raymarch_cube.frag'
-import exampleLattice from '../examples/raymarch/lattice.frag'
-import exampleFractal from '../examples/2D/julia.frag'
-import exampleMetaballs from '../examples/raymarch/metaballs_example.frag'
-
-import basicRaymarcher from '../basics/raymarch.glsl'
-import basicNormal from '../basics/normal.glsl'
-
-import colorHsv2rgb from '../colors/hsv2rgb.glsl'
-
-import primitiveSphere from '../primitives/sphere.glsl'
-import primitiveBox from '../primitives/box.glsl'
-import primitiveTorus from '../primitives/torus.glsl'
-import primitivePlane from '../primitives/plane.glsl'
-
-import operatorIntersection from '../operators/intersection.glsl'
-import operatorUnion from '../operators/union.glsl'
-import operatorDifference from '../operators/difference.glsl'
-import operatorUnionRound from '../operators/unionRound.glsl'
-
 const MenuBackground = styled.div`
   position: absolute;
   z-index: 1;
