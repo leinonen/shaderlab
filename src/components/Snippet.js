@@ -26,7 +26,6 @@ class Snippet extends Component {
   }
 
   copy() {
-    console.log(this.textRef)
     this.textRef.select()
     document.execCommand("copy");
     this.setState({ msg: 'Copied to clipboard' })
