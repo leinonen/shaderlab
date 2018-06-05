@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import Button, { ButtonLink } from './Button'
 import Icon from './Icon'
-import { BrowserRouter, Route, Link as RouterLink } from 'react-router-dom'
 
 const ButtonWrapper = styled.div`
   position: absolute;
@@ -11,8 +10,13 @@ const ButtonWrapper = styled.div`
   right: 1rem;
   display: flex;
   justify-content: flex-end;
-  & > button,
-  & > a {
+  @media screen and (max-width: 768px) {
+    background: rgba(10, 10, 10, 0.9);
+    left: 0;
+    right: 0;
+    padding-bottom: 1rem;
+  }
+  & > button {
     flex: 0 0 auto;
     flex-wrap: nowrap;
     padding: 1rem;
@@ -21,21 +25,18 @@ const ButtonWrapper = styled.div`
   }
 `
 
-function Navigation({ onToggleExpanded, onEditorToggle, onSelectExample, onFullscreen, onReset }) {
+function Navigation({ onToggleToolbox, onEditorToggle, onSelectExample, onFullscreen, onReset, onToggleConfig }) {
   return (
     <ButtonWrapper>
       <Button title="Factory Reset" onClick={onReset}>
         <Icon name="trash-alt" />
       </Button>
-      <Button title="Toolbox" onClick={onToggleExpanded}>
+      <Button title="Config" onClick={onToggleConfig}>
+        <Icon name="cog" />
+      </Button>
+      <Button title="Toolbox" onClick={onToggleToolbox}>
         <Icon name="toolbox" />
       </Button>
-      <ButtonLink to="/toolbox">
-        <Icon name="toolbox" />
-      </ButtonLink>
-      <ButtonLink to="/config">
-        <Icon name="cog" />
-      </ButtonLink>
       <Button title="Toggle Editor (Ctrl + Space)" onClick={onEditorToggle}>
         <Icon name="edit" />
       </Button>

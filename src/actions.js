@@ -14,6 +14,9 @@ export const toggleToolbox = () => ({ type: TOGGLE_TOOLBOX })
 export const TOGGLE_CONFIG = 'TOGGLE_CONFIG'
 export const toggleConfig = () => ({ type: TOGGLE_CONFIG })
 
+export const COLLAPSE_MENUS = 'COLLAPSE_MENUS'
+export const collapseMenus = () => ({ type: COLLAPSE_MENUS })
+
 export const COMPILE_SUCCESS = 'COMPILE_SUCCESS'
 export const compileSuccess = (payload) => ({ type: COMPILE_SUCCESS, payload })
 
@@ -25,3 +28,12 @@ export const reset = () => ({ type: RESET })
 
 export const SELECT_EXAMPLE = 'SELECT_EXAMPLE'
 export const selectExample = (payload) => ({ type: SELECT_EXAMPLE, payload })
+
+export const SCALE_1X = 'SCALE_1X'
+export const scale1x = () => ({ type: SCALE_1X })
+
+export const SCALE_2X = 'SCALE_2X'
+export const scale2x = () => ({ type: SCALE_2X })
+
+export const SCALE_4X = 'SCALE_4X'
+export const scale4x = () => ({ type: SCALE_4X })

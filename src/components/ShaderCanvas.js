@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 
 import vertexShaderSource from '../shader.vert'
-import fragmentShaderSource from '../examples/2D/fun_plasma.frag'
 
 export default class ShaderCanvas extends Component {
   constructor(props) {
@@ -10,31 +9,24 @@ export default class ShaderCanvas extends Component {
   }
 
   componentDidMount() {
-    this.gl = (ReactDOM).findDOMNode(this).getContext('webgl');
-    this.canvas = (ReactDOM).findDOMNode(this)
+    this.gl = ReactDOM.findDOMNode(this).getContext('webgl');
+    this.canvas = ReactDOM.findDOMNode(this)
     this.canvas.width = this.props.width
     this.canvas.height = this.props.height
     this.time = 0;
     this.fps = 0
     this.fpstime = 0
     this.success = false
-    this.compile()
+    this.compile(this.props.shader)
     this.paint()
   }
 
-  /*
   shouldComponentUpdate() {
     return false;
   }
 
-  componentWillUnmount() {
-    window.removeEventListener(this.onReSize)
-  }
- */
-
   componentWillReceiveProps(nextProps) {
     if (this.props.shader !== nextProps.shader) {
-      console.log('nextprops.shader', nextProps.shader)
       this.compile(nextProps.shader)
     }
     if (this.props.width !== nextProps.width || this.props.height !== nextProps.height) {
@@ -71,12 +63,6 @@ export default class ShaderCanvas extends Component {
   }
 
   compile(source) {
-    if (!source) {
-      console.log('use default shader')
-      source = fragmentShaderSource
-    }
-    console.log('compile')
-
     let gl = this.gl
     try {
       let vertexShader = this.getShader(gl, 'vertex', vertexShaderSource);
@@ -96,7 +82,7 @@ export default class ShaderCanvas extends Component {
         return;
       }
 
-      this.props.onCompileSuccess('Shader compiled successfully');
+      this.props.onCompileSuccess(source);
 
       gl.useProgram(program);
 
@@ -117,9 +103,10 @@ export default class ShaderCanvas extends Component {
       gl.enable(gl.SAMPLE_COVERAGE);
       gl.sampleCoverage(0.5, false);
     } catch (e) {
-      console.log('fiasko', e)
+      console.log('failed to compile shader')
       this.success = false
     }
+    console.log('compile successful')
     this.start = Date.now();
     this.success = true
   }

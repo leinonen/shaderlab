@@ -1,55 +1,46 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom'
 import { Provider, connect } from 'react-redux'
 
 import setupStore from './store'
+
+import ShaderCanvas from './components/ShaderCanvas'
+import Editor from './components/Editor'
+import StatusBar from './components/StatusBar'
+import Navigation from './components/Navigation'
+import Toolbox from './components/Toolbox'
+import Config from './components/Config'
 
 import {
   compileSuccess,
   compileError,
   toggleEditor,
+  toggleConfig,
+  toggleToolbox,
+  collapseMenus,
   setShaderSource,
   setEditorSource,
   reset,
-  selectExample
+  selectExample,
+  scale1x,
+  scale2x,
+  scale4x
 } from './actions'
 
-import ShaderCanvas from './components/ShaderCanvas'
-import Editor from './components/Editor'
-import Menu from './components/Menu'
-import StatusBar from './components/StatusBar'
-
-import fragmentShaderSource from './examples/2D/fun_plasma.frag'
-
-const ScaleFactor = 0.5
-
-const store = setupStore()
-
 class App extends Component {
-
   constructor(props) {
     super(props)
-    //    let currentShader = window.localStorage.getItem('shader') || fragmentShaderSource
     this.state = {
-      //      shaderSource: currentShader,
-      // editorText: props.editorSource,
-      //      showEditor: true,
-      //      compileSucces: true,
-      //      compileMessage: '',
-      menuExpanded: false,
       width: window.innerWidth,
       height: window.innerHeight
     }
-
-    // this.toggleEditor = this.toggleEditor.bind(this)
-    this.toggleMenu = this.toggleMenu.bind(this)
-    this.updateEditorText = this.updateEditorText.bind(this)
-    this.updateShaderSource = this.updateShaderSource.bind(this)
-    this.onSelectExample = this.onSelectExample.bind(this)
-//    this.onCompileError = this.onCompileError.bind(this)
-//    this.onCompileSuccess = this.onCompileSuccess.bind(this)
     this.onFullscreen = this.onFullscreen.bind(this)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.showEditor && this.props.showEditor !== nextProps.showEditor) {
+      this.editor.focus()
+    }
   }
 
   componentDidMount() {
@@ -58,13 +49,13 @@ class App extends Component {
     })
     this.keydownListener = window.addEventListener('keydown', (e) => {
       if (e.code === 'Escape') {
-        this.setState({ menuExpanded: false })
+        this.props.collapseMenus()
       }
       if (e.ctrlKey && e.code === 'Space') {
         this.props.toggleEditor()
       }
       if (e.ctrlKey && e.code === 'Enter') {
-        this.updateShaderSource(this.props.editorSource)
+        this.props.setShaderSource(this.props.editorSource)
       }
     })
   }
@@ -74,77 +65,53 @@ class App extends Component {
     window.removeEventListener(this.resizeHandler)
   }
 
-  updateShaderSource(value) {
-    // this.setState({ shaderSource: value })
-    this.props.setShaderSource(value)
-  }
-
-  updateEditorText(value) {
-    this.props.setEditorSource(value)
-    // this.setState({ editorText: value })
-  }
-/*
-  toggleEditor() {
-    / *
-    this.setState((prevState, props) => {
-      if (prevState.showEditor === false) {
-        this.editor.focus()
-      }
-      return {
-        showEditor: !prevState.showEditor
-      }
-    })* /
-    this.props.toggleEditor()
-  }
-*/
-  toggleMenu() {
-    this.setState({ menuExpanded: !this.state.menuExpanded })
-  }
-
   onFullscreen() {
     let el = document.documentElement
     let rfs = el.requestFullscreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen
     rfs.call(el)
   }
 
-  onSelectExample(source) {
-    this.updateEditorText(source)
-    this.updateShaderSource(source)
-    this.setState({ menuExpanded: !this.state.menuExpanded })
-  }
-
   render() {
-    const isError = this.props.compileSucces === false
+    const { width, height } = this.state
+    const isError = this.props.compileSuccess === false
     return (
-      <BrowserRouter>
-        <div>
-          <ShaderCanvas
-            width={this.state.width * ScaleFactor}
-            height={this.state.height * ScaleFactor}
-            shader={this.props.shaderSource}
-            onCompileSuccess={this.props.compileSuccess}
-            onCompileError={this.props.compileError}
-          />
-          <Menu
-            expanded={this.state.menuExpanded}
-            onToggleExpanded={this.toggleMenu}
-            onEditorToggle={this.props.toggleEditor}
-            onSelectExample={this.props.selectExample}
-            onFullscreen={this.onFullscreen}
-            onReset={this.props.reset}
-          />
-          <Editor
-            onLoad={(editor) => { this.editor = editor; }}
-            style={{ visibility: this.props.showEditor ? 'visible' : 'hidden' }}
-            value={this.props.editorSource}
-            onChange={this.props.setEditorSource}
-            width={`${this.state.width}`}
-            height={`${this.state.height}`}
-            focus={true}
-          />
-          <StatusBar error={isError}>{this.state.compileMessage}</StatusBar>
-        </div>
-      </BrowserRouter>
+      <div>
+        <ShaderCanvas
+          width={width * this.props.scaling}
+          height={height * this.props.scaling}
+          shader={this.props.shaderSource}
+          onCompileSuccess={this.props.compileSuccess}
+          onCompileError={this.props.compileError}
+        />
+        <Navigation
+          onEditorToggle={this.props.toggleEditor}
+          onToggleConfig={this.props.toggleConfig}
+          onToggleToolbox={this.props.toggleToolbox}
+          onFullscreen={this.onFullscreen}
+          onReset={this.props.reset}
+        />
+        <Editor
+          onLoad={(editor) => { this.editor = editor; }}
+          style={{ visibility: this.props.showEditor ? 'visible' : 'hidden' }}
+          value={this.props.editorSource}
+          onChange={this.props.setEditorSource}
+          width={`${width}`}
+          height={`${height}`}
+          focus={true}
+        />
+        <StatusBar error={isError}>{this.props.compileMessage}</StatusBar>
+        <Toolbox
+          expanded={this.props.showToolbox}
+          onSelectExample={this.props.selectExample}
+        />
+        <Config
+          expanded={this.props.showConfig}
+          scaling={this.props.scaling}
+          scale1x={this.props.scale1x}
+          scale2x={this.props.scale2x}
+          scale4x={this.props.scale4x}
+        />
+      </div>
     )
   }
 }
@@ -159,13 +126,21 @@ const mapDispatchToProps = {
   compileSuccess,
   compileError,
   toggleEditor,
+  toggleConfig,
+  toggleToolbox,
+  collapseMenus,
   setShaderSource,
   setEditorSource,
   reset,
-  selectExample
+  selectExample,
+  scale1x,
+  scale2x,
+  scale4x
 }
 
 const ShaderLab = connect(mapStateToProps, mapDispatchToProps)(App)
+
+const store = setupStore()
 
 ReactDOM.render(
   <Provider store={store}>

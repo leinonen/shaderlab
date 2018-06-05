@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-import { BrowserRouter, Route, Link as RouterLink } from 'react-router-dom'
 
 import Navigation from './Navigation'
 
@@ -35,14 +34,32 @@ import operatorUnion from '../operators/union.glsl'
 import operatorDifference from '../operators/difference.glsl'
 import operatorUnionRound from '../operators/unionRound.glsl'
 
-export const MenuWrapper = styled.div`
+const MenuBackground = styled.div`
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: ${props => props.expanded ? '60%' : '0'};
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
+  background-color: ${props => props.expanded ? 'rgba(10,10,10,0.9)' : 'transparent'};
+  transition: all 0.5s ease;
+`
+
+const MenuWrapper = styled.div`
   position: absolute;
   z-index: 4;
   top: 0;
   bottom: 0;
   right: 0;
-  width: 40rem;
-  background-color: ${props => props.expanded ? 'rgba(10,10,10, 0.9)' : 'transparent'};
+  width: 60%;
+  background-color: rgba(10,10,10, 0.9);
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
   color: white;
   overflow-y: auto;
   h2 {
@@ -56,197 +73,26 @@ export const MenuWrapper = styled.div`
     overflow-x: auto;
   }
 `
-
-const MenuBackground = styled.div`
-  position: absolute;
-  z-index: 1;
-  pointer-events: none;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: ${props => props.expanded ? '40rem' : '0rem'};
-  background-color: ${props => props.expanded ? 'rgba(10,10,10,0.9)' : 'transparent'};
-  transition: all 0.5s ease;
-`
-
-export const ContentWrapper = styled.div`
+const ContentWrapper = styled.div`
   padding: 5rem 1rem;
 `
-
-const Item = (props) => {
-  const { type } = props
-  switch (type) {
-    case 'example': {
-      return <Example {...props} />
-    }
-    case 'snippet': {
-      return <Snippet {...props} />
-    }
-    case 'link': {
-      return <Link {...props} />
-    }
-    default:
-      return null
-  }
-}
-
 class Menu extends Component {
-  constructor(props) {
-    super(props)
-    this.toggleGroup = this.toggleGroup.bind(this)
-    this.state = {
-      groups: [
-        {
-          name: 'Examples',
-          items: [
-            { type: 'example', name: 'Plasma (Default)', source: exampleHippiePlasma, thumbnail: 'plasma.png' },
-            { type: 'example', name: 'Julia Fractal', source: exampleFractal, thumbnail: 'julia.png' },
-            { type: 'example', name: 'Raymarched Cube', source: exampleRaymarcher, thumbnail: 'cube.png' },
-            { type: 'example', name: 'Raymarched Lattice', source: exampleLattice, thumbnail: 'lattice.png' },
-            { type: 'example', name: 'Raymarched Metaballs', source: exampleMetaballs, thumbnail: 'metaballs.png' }
-          ]
-        },
-        {
-          name: 'Color Functions',
-          items: [
-            { type: 'snippet', name: 'HSV to RGB', source: colorHsv2rgb }
-          ]
-        },
-        {
-          name: 'Raymarching Basics',
-          items: [
-            { type: 'snippet', name: 'Raymarching', source: basicRaymarcher },
-            { type: 'snippet', name: 'Normal / Gradient', source: basicNormal }
-          ]
-        },
-        {
-          name: 'Raymarching Primitives',
-          items: [
-            { type: 'snippet', name: 'Sphere', source: primitiveSphere },
-            { type: 'snippet', name: 'Box', source: primitiveBox },
-            { type: 'snippet', name: 'Torus', source: primitiveTorus },
-            { type: 'snippet', name: 'Plane', source: primitivePlane }
-          ]
-        },
-        {
-          name: 'Raymarching Boolean Operators',
-          items: [
-            { type: 'snippet', name: 'Intersection', source: operatorIntersection },
-            { type: 'snippet', name: 'Union', source: operatorUnion },
-            { type: 'snippet', name: 'Union Round', source: operatorUnionRound },
-            { type: 'snippet', name: 'Difference', source: operatorDifference }
-          ]
-        },
-        {
-          name: 'Tutorials',
-          items: [
-            {
-              type: 'link',
-              name: 'The Book of Shaders',
-              url: 'https://thebookofshaders.com',
-              description: 'This is a gentle step-by-step guide through the abstract and complex universe of Fragment Shaders.'
-            },
-            {
-              type: 'link',
-              name: 'Raymarching Distance Fields',
-              url: 'http://9bitscience.blogspot.com/2013/07/raymarching-distance-fields_14.html',
-              description: 'Good tutorial about raymarching distance fields'
-            },
-            {
-              type: 'link',
-              name: 'Ray Marching and Signed Distance Functions',
-              url: 'http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/',
-              description: 'Another good tutorial about raymarching distance fields'
-            }
-          ]
-        },
-        {
-          name: 'Resources',
-          items: [
-            {
-              type: 'link',
-              name: 'Inigo Quilez - Articles',
-              url: 'http://www.iquilezles.org',
-              description: 'Many awesome articles about computer graphics, and shaders in particular. A gold mine of information'
-            },
-            {
-              type: 'link',
-              name: 'Shadertoy',
-              url: 'https://shadertoy.com',
-              description: 'Awesome collection of shaders, made by the community'
-            },
-            {
-              type: 'link',
-              name: 'GLSL Sandbox',
-              url: 'http://glslsandbox.com',
-              description: 'More shaders made by the community'
-            },
-            {
-              type: 'link',
-              name: 'hg_sdf',
-              url: 'http://mercury.sexy/hg_sdf/',
-              description: 'A glsl library for building signed distance functions. By demoscene group mercury'
-            }
-          ]
-        }
-      ]
-    }
-  }
-
-  toggleGroup(name) {
-    this.setState({
-      groups: this.state.groups.map(group => {
-        if (group.name === name) {
-          return { ...group, expanded: !group.expanded }
-        }
-        return group
-      })
-    })
-  }
-
   render() {
-    const { expanded, onToggleExpanded, onEditorToggle, onSelectExample, onFullscreen, onReset } = this.props
+    const { children, expanded } = this.props
     return (
       <div>
         <MenuBackground expanded={expanded} />
-        <Navigation
-          onToggleExpanded={onToggleExpanded}
-          onEditorToggle={onEditorToggle}
-          onFullscreen={onFullscreen}
-          onReset={onReset}
-        />
-        <Route exact path="/toolbox" component={Toolbox} />
-        <Route exact path="/config" component={Config} />
+        {
+          expanded &&
+          <MenuWrapper>
+            <ContentWrapper>
+              {children}
+            </ContentWrapper>
+          </MenuWrapper>
+        }
       </div>
     )
   }
 }
 
-/* 
-
-        {
-          expanded &&
-          <MenuWrapper expanded={expanded}>
-            <ContentWrapper>
-              {this.state.groups.map(group => (
-                <Group
-                  key={group.name}
-                  onSelectExample={onSelectExample}
-                  onExpandToggle={this.toggleGroup}
-                  {...group}
-                >
-                  {
-                    group.items.map(item => (
-                      <Item key={item.name} onSelectExample={onSelectExample} {...item} />
-                    ))
-                  }
-                </Group>
-              ))
-              }
-            </ContentWrapper>
-          </MenuWrapper>
-        }
-
-
-*/
 export default Menu
