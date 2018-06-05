@@ -32,7 +32,8 @@ class App extends Component {
     super(props)
     this.state = {
       width: window.innerWidth,
-      height: window.innerHeight
+      height: window.innerHeight,
+      fullscreen: false
     }
     this.onFullscreen = this.onFullscreen.bind(this)
   }
@@ -66,9 +67,16 @@ class App extends Component {
   }
 
   onFullscreen() {
-    let el = document.documentElement
-    let rfs = el.requestFullscreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen
-    rfs.call(el)
+    this.setState({fullscreen: !this.state.fullscreen}, () => {
+      if (this.state.fullscreen) {
+        let el = document.documentElement
+        let rfs = el.requestFullscreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen
+        rfs.call(el)
+      } else {
+        let cfs = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msCancelFullscreen;
+        cfs.call(document)
+      }
+    })
   }
 
   render() {
