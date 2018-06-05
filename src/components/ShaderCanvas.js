@@ -17,10 +17,12 @@ export default class ShaderCanvas extends Component {
     this.time = 0;
     this.fps = 0
     this.fpstime = 0
+    this.success = false
     this.compile()
     this.paint()
   }
 
+  /*
   shouldComponentUpdate() {
     return false;
   }
@@ -28,10 +30,11 @@ export default class ShaderCanvas extends Component {
   componentWillUnmount() {
     window.removeEventListener(this.onReSize)
   }
+ */
 
   componentWillReceiveProps(nextProps) {
     if (this.props.shader !== nextProps.shader) {
-      // console.log('nextprops.shader', nextProps.shader)
+      console.log('nextprops.shader', nextProps.shader)
       this.compile(nextProps.shader)
     }
     if (this.props.width !== nextProps.width || this.props.height !== nextProps.height) {
@@ -69,8 +72,10 @@ export default class ShaderCanvas extends Component {
 
   compile(source) {
     if (!source) {
-      source = window.localStorage.getItem('shader') || fragmentShaderSource
+      console.log('use default shader')
+      source = fragmentShaderSource
     }
+    console.log('compile')
 
     let gl = this.gl
     try {
@@ -91,7 +96,7 @@ export default class ShaderCanvas extends Component {
         return;
       }
 
-      this.props.onCompileSuccess();
+      this.props.onCompileSuccess('Shader compiled successfully');
 
       gl.useProgram(program);
 
@@ -112,12 +117,17 @@ export default class ShaderCanvas extends Component {
       gl.enable(gl.SAMPLE_COVERAGE);
       gl.sampleCoverage(0.5, false);
     } catch (e) {
-      console.log('fiasko')
+      console.log('fiasko', e)
+      this.success = false
     }
     this.start = Date.now();
+    this.success = true
   }
 
   paint() {
+    if (!this.success) {
+      return;
+    }
     let elapsedtime = (Date.now() - this.start) / 1000.0;
     let framespeed = 1.0;
     const gl = this.gl

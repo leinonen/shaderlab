@@ -1,15 +1,15 @@
 import React from 'react';
 
-import {MenuWrapper, ContentWrapper} from './Menu' 
+import { MenuWrapper, ContentWrapper } from './Menu'
 
-const Config = () => {
+const Toolbox = () => {
   return (
     <MenuWrapper>
       <ContentWrapper>
-      Config
+        Toolbox
       </ContentWrapper>
     </MenuWrapper>
   );
 };
 
-export default Config;
+export default Toolbox;

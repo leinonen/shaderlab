@@ -1,5 +1,19 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom'
+import { Provider, connect } from 'react-redux'
+
+import setupStore from './store'
+
+import {
+  compileSuccess,
+  compileError,
+  toggleEditor,
+  setShaderSource,
+  setEditorSource,
+  reset,
+  selectExample
+} from './actions'
 
 import ShaderCanvas from './components/ShaderCanvas'
 import Editor from './components/Editor'
@@ -10,31 +24,32 @@ import fragmentShaderSource from './examples/2D/fun_plasma.frag'
 
 const ScaleFactor = 0.5
 
+const store = setupStore()
+
 class App extends Component {
 
   constructor(props) {
     super(props)
-    let currentShader = window.localStorage.getItem('shader') || fragmentShaderSource
+    //    let currentShader = window.localStorage.getItem('shader') || fragmentShaderSource
     this.state = {
-      shaderSource: currentShader,
-      editorText: currentShader,
-      showEditor: true,
-      compileSucces: true,
-      compileMessage: '',
+      //      shaderSource: currentShader,
+      // editorText: props.editorSource,
+      //      showEditor: true,
+      //      compileSucces: true,
+      //      compileMessage: '',
       menuExpanded: false,
       width: window.innerWidth,
       height: window.innerHeight
     }
 
-    this.toggleEditor = this.toggleEditor.bind(this)
+    // this.toggleEditor = this.toggleEditor.bind(this)
     this.toggleMenu = this.toggleMenu.bind(this)
     this.updateEditorText = this.updateEditorText.bind(this)
     this.updateShaderSource = this.updateShaderSource.bind(this)
     this.onSelectExample = this.onSelectExample.bind(this)
-    this.onCompileError = this.onCompileError.bind(this)
-    this.onCompileSuccess = this.onCompileSuccess.bind(this)
+//    this.onCompileError = this.onCompileError.bind(this)
+//    this.onCompileSuccess = this.onCompileSuccess.bind(this)
     this.onFullscreen = this.onFullscreen.bind(this)
-    this.onReset = this.onReset.bind(this)
   }
 
   componentDidMount() {
@@ -46,10 +61,10 @@ class App extends Component {
         this.setState({ menuExpanded: false })
       }
       if (e.ctrlKey && e.code === 'Space') {
-        this.toggleEditor()
+        this.props.toggleEditor()
       }
       if (e.ctrlKey && e.code === 'Enter') {
-        this.updateShaderSource(this.state.editorText)
+        this.updateShaderSource(this.props.editorSource)
       }
     })
   }
@@ -60,14 +75,17 @@ class App extends Component {
   }
 
   updateShaderSource(value) {
-    this.setState({ shaderSource: value })
+    // this.setState({ shaderSource: value })
+    this.props.setShaderSource(value)
   }
 
   updateEditorText(value) {
-    this.setState({ editorText: value })
+    this.props.setEditorSource(value)
+    // this.setState({ editorText: value })
   }
-
+/*
   toggleEditor() {
+    / *
     this.setState((prevState, props) => {
       if (prevState.showEditor === false) {
         this.editor.focus()
@@ -75,9 +93,10 @@ class App extends Component {
       return {
         showEditor: !prevState.showEditor
       }
-    })
+    })* /
+    this.props.toggleEditor()
   }
-
+*/
   toggleMenu() {
     this.setState({ menuExpanded: !this.state.menuExpanded })
   }
@@ -94,60 +113,62 @@ class App extends Component {
     this.setState({ menuExpanded: !this.state.menuExpanded })
   }
 
-  onCompileError(compileMessage) {
-    this.setState({ 
-      compileSucces: false, 
-      compileMessage
-    })
-  }
-
-  onCompileSuccess() {
-    this.setState({ 
-      compileSucces: true, 
-      compileMessage: 'Press Ctrl + Enter to compile, Ctrl + Space to toggle editor.' 
-    })
-    window.localStorage.setItem('shader', this.state.shaderSource)
-  }
-
-  onReset() {
-    this.setState({
-      shaderSource: fragmentShaderSource,
-      editorText: fragmentShaderSource,
-    })
-  }
-
   render() {
-    const isError = this.state.compileSucces === false
+    const isError = this.props.compileSucces === false
     return (
-      <div>
-        <ShaderCanvas
-          width={this.state.width * ScaleFactor}
-          height={this.state.height * ScaleFactor}
-          shader={this.state.shaderSource}
-          onCompileSuccess={this.onCompileSuccess}
-          onCompileError={this.onCompileError}
-        />
-        <Menu
-          expanded={this.state.menuExpanded}
-          onToggleExpanded={this.toggleMenu}
-          onEditorToggle={this.toggleEditor}
-          onSelectExample={this.onSelectExample}
-          onFullscreen={this.onFullscreen}
-          onReset={this.onReset}
-        />
-        <Editor
-          onLoad={(editor) => { this.editor = editor; }}
-          style={{ visibility: this.state.showEditor ? 'visible' : 'hidden' }}
-          value={this.state.editorText}
-          onChange={this.updateEditorText}
-          width={`${this.state.width}`}
-          height={`${this.state.height}`}
-          focus={true}
-        />
-        <StatusBar error={isError}>{this.state.compileMessage}</StatusBar>
-      </div>
+      <BrowserRouter>
+        <div>
+          <ShaderCanvas
+            width={this.state.width * ScaleFactor}
+            height={this.state.height * ScaleFactor}
+            shader={this.props.shaderSource}
+            onCompileSuccess={this.props.compileSuccess}
+            onCompileError={this.props.compileError}
+          />
+          <Menu
+            expanded={this.state.menuExpanded}
+            onToggleExpanded={this.toggleMenu}
+            onEditorToggle={this.props.toggleEditor}
+            onSelectExample={this.props.selectExample}
+            onFullscreen={this.onFullscreen}
+            onReset={this.props.reset}
+          />
+          <Editor
+            onLoad={(editor) => { this.editor = editor; }}
+            style={{ visibility: this.props.showEditor ? 'visible' : 'hidden' }}
+            value={this.props.editorSource}
+            onChange={this.props.setEditorSource}
+            width={`${this.state.width}`}
+            height={`${this.state.height}`}
+            focus={true}
+          />
+          <StatusBar error={isError}>{this.state.compileMessage}</StatusBar>
+        </div>
+      </BrowserRouter>
     )
   }
 }
 
-ReactDOM.render(<App />, document.querySelector('#app'))
+const mapStateToProps = (state) => {
+  return {
+    ...state
+  }
+}
+
+const mapDispatchToProps = {
+  compileSuccess,
+  compileError,
+  toggleEditor,
+  setShaderSource,
+  setEditorSource,
+  reset,
+  selectExample
+}
+
+const ShaderLab = connect(mapStateToProps, mapDispatchToProps)(App)
+
+ReactDOM.render(
+  <Provider store={store}>
+    <ShaderLab />
+  </Provider>
+  , document.querySelector('#app'))

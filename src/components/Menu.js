@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
+import { BrowserRouter, Route, Link as RouterLink } from 'react-router-dom'
 
 import Navigation from './Navigation'
+
+import Toolbox from './Toolbox'
+import Config from './Config'
 
 import Button from './Button'
 import Group from './Group'
@@ -31,7 +35,7 @@ import operatorUnion from '../operators/union.glsl'
 import operatorDifference from '../operators/difference.glsl'
 import operatorUnionRound from '../operators/unionRound.glsl'
 
-const MenuWrapper = styled.div`
+export const MenuWrapper = styled.div`
   position: absolute;
   z-index: 4;
   top: 0;
@@ -65,7 +69,7 @@ const MenuBackground = styled.div`
   transition: all 0.5s ease;
 `
 
-const ContentWrapper = styled.div`
+export const ContentWrapper = styled.div`
   padding: 5rem 1rem;
 `
 
@@ -211,6 +215,15 @@ class Menu extends Component {
           onFullscreen={onFullscreen}
           onReset={onReset}
         />
+        <Route exact path="/toolbox" component={Toolbox} />
+        <Route exact path="/config" component={Config} />
+      </div>
+    )
+  }
+}
+
+/* 
+
         {
           expanded &&
           <MenuWrapper expanded={expanded}>
@@ -233,9 +246,7 @@ class Menu extends Component {
             </ContentWrapper>
           </MenuWrapper>
         }
-      </div>
-    )
-  }
-}
 
+
+*/
 export default Menu
