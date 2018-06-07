@@ -1,7 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-
+import { connect } from 'react-redux'
+import { createSelector } from 'reselect'
 import pkgJson from '../../package.json'
+import { selectEditor } from '../store/selectors';
 
 const StatusBarWrapper = styled.div`
   position: absolute;
@@ -31,11 +33,20 @@ const Credz = styled.div`
   text-align: right;
 `
 
-const StatusBar = (props) => (
-  <StatusBarWrapper {...props}>
-    <Message>{props.children}</Message>
-    <Credz>{pkgJson.name}/{pkgJson.version} by {pkgJson.author}</Credz>
-  </StatusBarWrapper>
+const StatusBar = (props) => {
+  const { editor } = props
+  const { name, version, author } = pkgJson
+  return (
+    <StatusBarWrapper {...props} error={editor.compileSuccess === false}>
+      <Message>{editor.compileMessage}</Message>
+      <Credz>{name}/{version} by {author}</Credz>
+    </StatusBarWrapper>
+  )
+}
+
+const mapStateToProps = createSelector(
+  selectEditor,
+  (editor) => ({ editor })
 )
 
-export default StatusBar
+export default connect(mapStateToProps, null)(StatusBar)

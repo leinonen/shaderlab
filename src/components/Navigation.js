@@ -1,5 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
+import { connect } from 'react-redux'
+import { createSelector } from 'reselect'
+
+import { selectApp } from '../store/selectors'
+import { toggleConfig, toggleEditor, toggleToolbox } from '../store/app/actions'
+import { reset } from '../store/editor/actions'
+
 import Button, { ButtonLink } from './Button'
 import Icon from './Icon'
 
@@ -25,26 +32,39 @@ const ButtonWrapper = styled.div`
   }
 `
 
-function Navigation({ onToggleToolbox, onEditorToggle, onSelectExample, onFullscreen, onReset, onToggleConfig }) {
+function Navigation(props) {
+  const { app } = props
   return (
     <ButtonWrapper>
-      <Button title="Factory Reset" onClick={onReset}>
+      <Button title="Factory Reset" onClick={props.reset}>
         <Icon name="trash-alt" />
       </Button>
-      <Button title="Config" onClick={onToggleConfig}>
+      <Button title="Config" onClick={props.toggleConfig}>
         <Icon name="cog" />
       </Button>
-      <Button title="Toolbox" onClick={onToggleToolbox}>
+      <Button title="Toolbox" onClick={props.toggleToolbox}>
         <Icon name="toolbox" />
       </Button>
-      <Button title="Toggle Editor (Ctrl + Space)" onClick={onEditorToggle}>
+      <Button title="Toggle Editor (Ctrl + Space)" onClick={props.toggleEditor}>
         <Icon name="edit" />
       </Button>
-      <Button title="Fullscreen" onClick={onFullscreen}>
+      <Button title="Fullscreen" onClick={props.onFullscreen}>
         <Icon name="expand-arrows-alt" />
       </Button>
     </ButtonWrapper>
   )
 }
 
-export default Navigation
+const mapStateToProps = createSelector(
+  selectApp,
+  (app) => ({ app })
+)
+
+const mapDispatchToProps = {
+  reset,
+  toggleEditor,
+  toggleConfig,
+  toggleToolbox
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navigation)

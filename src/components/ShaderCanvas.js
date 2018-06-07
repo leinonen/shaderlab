@@ -1,14 +1,20 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
+import { connect } from 'react-redux'
+import { createSelector } from 'reselect'
+import { selectEditor, selectConfig } from '../store/selectors'
+
+import { compileSuccess, compileError } from '../store/editor/actions'
 
 import vertexShaderSource from '../shader.vert'
 
-export default class ShaderCanvas extends Component {
+class ShaderCanvas extends Component {
   constructor(props) {
     super(props);
   }
 
   componentDidMount() {
+    const { editor, config } = this.props
     this.gl = ReactDOM.findDOMNode(this).getContext('webgl');
     this.canvas = ReactDOM.findDOMNode(this)
     this.canvas.width = this.props.width
@@ -17,7 +23,8 @@ export default class ShaderCanvas extends Component {
     this.fps = 0
     this.fpstime = 0
     this.success = false
-    this.compile(this.props.shader)
+    this.compile(editor.shaderSource)
+    this.applyTexture(config.texture0)
     this.paint()
   }
 
@@ -26,12 +33,15 @@ export default class ShaderCanvas extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.shader !== nextProps.shader) {
-      this.compile(nextProps.shader)
+    if (this.props.editor.shaderSource !== nextProps.editor.shaderSource) {
+      this.compile(nextProps.editor.shaderSource)
     }
     if (this.props.width !== nextProps.width || this.props.height !== nextProps.height) {
       this.canvas.width = nextProps.width
       this.canvas.height = nextProps.height
+    }
+    if (this.props.config.texture0 !== nextProps.config.texture0) {
+      this.applyTexture(nextProps.config.texture0)
     }
   }
 
@@ -43,7 +53,26 @@ export default class ShaderCanvas extends Component {
     console.log(e)
   }
 
-  getShader(gl, type, source) {
+  applyTexture(textureUrl) {
+    let gl = this.gl
+    let texture0Loc = gl.getUniformLocation(this.program, 'texture0')
+    let texture = this.loadTexture(textureUrl, true)
+    let unit = 0;
+    gl.uniform1i(texture0Loc, unit)
+    gl.activeTexture(gl.TEXTURE0 + unit)
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+  }
+
+  getVertexShader(source) {
+    return this.getShader('vertex', source)
+  }
+
+  getFragmentShader(source) {
+    return this.getShader('fragment', source)
+  }
+
+  getShader(type, source) {
+    let gl = this.gl
     let shader;
     if (type == 'fragment') {
       shader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -56,17 +85,17 @@ export default class ShaderCanvas extends Component {
     gl.compileShader(shader);
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       let msg = gl.getShaderInfoLog(shader).split('\n')[0]
-      this.props.onCompileError(msg);
+      this.props.compileError(msg);
       return null;
     }
     return shader;
   }
 
-  compile(source) {
-    let gl = this.gl
+  compile(fragSource) {
     try {
-      let vertexShader = this.getShader(gl, 'vertex', vertexShaderSource);
-      let fragmentShader = this.getShader(gl, 'fragment', source);
+      let gl = this.gl
+      let vertexShader = this.getVertexShader(vertexShaderSource);
+      let fragmentShader = this.getFragmentShader(fragSource);
       let program = gl.createProgram();
       gl.attachShader(program, vertexShader);
       gl.attachShader(program, fragmentShader);
@@ -76,13 +105,13 @@ export default class ShaderCanvas extends Component {
       gl.deleteShader(fragmentShader);
 
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        this.props.onCompileError('Failed to initialize shader');
-        console.log('Failed to initialize shader');
+        this.props.compileError('Failed to initialize shader');
+        console.log('failed to initialize shader');
         gl.deleteProgram(program);
         return;
       }
 
-      this.props.onCompileSuccess(source);
+      this.props.compileSuccess(fragSource);
 
       gl.useProgram(program);
 
@@ -102,13 +131,59 @@ export default class ShaderCanvas extends Component {
 
       gl.enable(gl.SAMPLE_COVERAGE);
       gl.sampleCoverage(0.5, false);
+
+      this.program = program
     } catch (e) {
       console.log('failed to compile shader')
       this.success = false
+      return
     }
     console.log('compile successful')
     this.start = Date.now();
     this.success = true
+  }
+
+  loadTexture(url, repeat = false) {
+    let gl = this.gl
+    try {
+
+      // Create a texture.
+      const texture = gl.createTexture()
+      gl.bindTexture(gl.TEXTURE_2D, texture)
+      
+      // Fill the texture with a 1x1 blue pixel.
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]))
+      
+      const image = new Image()
+      image.src = url
+      image.onerror = (e) => {
+        console.log(e)
+        this.props.compileError('Error loading texture')
+      }
+      image.addEventListener('load', () => {
+        // Now that the image has loaded make copy it to the texture.
+        gl.bindTexture(gl.TEXTURE_2D, texture)
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true)
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image)
+        
+        let ext = (
+          gl.getExtension('EXT_texture_filter_anisotropic') ||
+          gl.getExtension('MOZ_EXT_texture_filter_anisotropic') ||
+          gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic')
+        )
+        gl.texParameterf(gl.TEXTURE_2D, ext.TEXTURE_MAX_ANISOTROPY_EXT, 4)
+        
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+        // this.props.compileSuccess('Texture loaded')
+      })
+      
+      return texture
+    } catch (e) {
+      return null;
+    }
   }
 
   paint() {
@@ -120,7 +195,7 @@ export default class ShaderCanvas extends Component {
     const gl = this.gl
     const canvas = this.canvas
     gl.viewport(0, 0, canvas.width, canvas.height)
-    gl.uniform2f(this.resolutionLocation, this.canvas.width, this.canvas.height);
+    gl.uniform2f(this.resolutionLocation, canvas.width, canvas.height);
 
     this.time += framespeed * elapsedtime;
     gl.uniform1f(this.timeLocation, this.time);
@@ -144,3 +219,16 @@ export default class ShaderCanvas extends Component {
     return <canvas></canvas>
   }
 }
+
+const mapStateToProps = createSelector(
+  selectEditor,
+  selectConfig,
+  (editor, config) => ({ editor, config })
+)
+
+const mapDispatchToProps = {
+  compileSuccess,
+  compileError
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ShaderCanvas)

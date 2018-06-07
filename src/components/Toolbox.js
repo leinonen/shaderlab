@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
+import { createSelector } from 'reselect'
+
+import {selectExample} from '../store/editor/actions'
 
 import Button from './Button'
 import Group from './Group'
@@ -153,25 +157,28 @@ class Toolbox extends Component {
   toggleGroup(name) {
     this.setState({
       groups: this.state.groups.map(group => {
-        return { ...group, expanded: group.name === name ? !group.expanded : false }
+        if (group.name === name) {
+          return { ...group, expanded: group.name === name ? !group.expanded : false }
+        }
+        return group;
       })
     })
   }
 
   render() {
-    const { expanded, onSelectExample } = this.props
+    const { expanded, selectExample } = this.props
     return (
       <Menu expanded={expanded}>
         {this.state.groups.map(group => (
           <Group
             key={group.name}
-            onSelectExample={onSelectExample}
+            onSelectExample={selectExample}
             onExpandToggle={this.toggleGroup}
             {...group}
           >
             {
               group.items.map(item => (
-                <Item key={item.name} onSelectExample={onSelectExample} {...item} />
+                <Item key={item.name} onSelectExample={selectExample} {...item} />
               ))
             }
           </Group>
@@ -183,4 +190,10 @@ class Toolbox extends Component {
   }
 }
 
-export default Toolbox;
+const mapStateToProps = null
+
+const mapDispatchToProps = {
+  selectExample
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Toolbox);
