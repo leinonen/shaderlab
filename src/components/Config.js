@@ -94,6 +94,7 @@ class Config extends Component {
           <p>Lower scaling will improve performance but reduce image quality</p>
         </Group>
         <Group name="Textures" expanded={showTextures} onExpandToggle={this.toggleTextures} >
+          <p>Texture can be included using <strong>uniform sampler2D texture0;</strong></p>
           <TextureRow>
             <div className="shrink">
               <label>texture0</label>

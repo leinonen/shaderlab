@@ -155,6 +155,7 @@ class ShaderCanvas extends Component {
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]))
       
       const image = new Image()
+      image.crossOrigin = 'Anonymous';
       image.src = url
       image.onerror = (e) => {
         console.log(e)

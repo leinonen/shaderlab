@@ -5,7 +5,7 @@ import {
 
 const initialState = {
   scaling: 0.5,
-  texture0: 'http://localhost:8080/textures/tunnel.jpg'
+  texture0: '/textures/tunnel.jpg'
 }
 
 const reducer = (state = initialState, action) => {
