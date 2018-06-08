@@ -150,10 +150,10 @@ class ShaderCanvas extends Component {
       // Create a texture.
       const texture = gl.createTexture()
       gl.bindTexture(gl.TEXTURE_2D, texture)
-      
+
       // Fill the texture with a 1x1 blue pixel.
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]))
-      
+
       const image = new Image()
       image.crossOrigin = 'Anonymous';
       image.src = url
@@ -166,21 +166,21 @@ class ShaderCanvas extends Component {
         gl.bindTexture(gl.TEXTURE_2D, texture)
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true)
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image)
-        
+
         let ext = (
           gl.getExtension('EXT_texture_filter_anisotropic') ||
           gl.getExtension('MOZ_EXT_texture_filter_anisotropic') ||
           gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic')
         )
         gl.texParameterf(gl.TEXTURE_2D, ext.TEXTURE_MAX_ANISOTROPY_EXT, 4)
-        
+
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE)
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE)
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
         // this.props.compileSuccess('Texture loaded')
       })
-      
+
       return texture
     } catch (e) {
       return null;
@@ -188,28 +188,27 @@ class ShaderCanvas extends Component {
   }
 
   paint() {
-    if (!this.success) {
-      return;
+    if (this.success) {
+      let elapsedtime = (Date.now() - this.start) / 1000.0;
+      let framespeed = 1.0;
+      const gl = this.gl
+      const canvas = this.canvas
+      gl.viewport(0, 0, canvas.width, canvas.height)
+      gl.uniform2f(this.resolutionLocation, canvas.width, canvas.height);
+
+      this.time += framespeed * elapsedtime;
+      gl.uniform1f(this.timeLocation, this.time);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      
+      this.fps++;
+      this.fpstime += elapsedtime;
+      
+      if (this.fpstime >= 1.0) {
+        this.fpstime -= 1.0;
+        this.fps = 0;
+      }
+      
     }
-    let elapsedtime = (Date.now() - this.start) / 1000.0;
-    let framespeed = 1.0;
-    const gl = this.gl
-    const canvas = this.canvas
-    gl.viewport(0, 0, canvas.width, canvas.height)
-    gl.uniform2f(this.resolutionLocation, canvas.width, canvas.height);
-
-    this.time += framespeed * elapsedtime;
-    gl.uniform1f(this.timeLocation, this.time);
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-    this.fps++;
-    this.fpstime += elapsedtime;
-
-    if (this.fpstime >= 1.0) {
-      this.fpstime -= 1.0;
-      this.fps = 0;
-    }
-
     this.start = Date.now();
     requestAnimationFrame(() => {
       this.paint()
