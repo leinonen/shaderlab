@@ -7,8 +7,8 @@ import { selectApp } from '../store/selectors'
 import { toggleConfig, toggleEditor, toggleToolbox } from '../store/app/actions'
 import { reset } from '../store/editor/actions'
 
-import Button, { ButtonLink } from './Button'
-import Icon from './Icon'
+import Icon from '../components/Icon'
+import Button, { ButtonLink } from '../components/Button'
 
 const ButtonWrapper = styled.div`
   position: absolute;

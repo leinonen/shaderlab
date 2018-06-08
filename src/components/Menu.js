@@ -1,14 +1,8 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
 
-import Navigation from './Navigation'
-
-import Toolbox from './Toolbox'
-import Config from './Config'
-
 import Button from './Button'
 import Group from './Group'
-
 import Example from './Example'
 import Snippet from './Snippet'
 import Link from './Link'

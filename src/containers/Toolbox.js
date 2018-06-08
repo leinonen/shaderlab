@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 
-import {selectExample} from '../store/editor/actions'
+import { selectExample } from '../store/editor/actions'
 
-import Button from './Button'
-import Group from './Group'
-
-import Example from './Example'
-import Snippet from './Snippet'
-import Link from './Link'
+import Button from '../components/Button'
+import Group from '../components/Group'
+import Example from '../components/Example'
+import Snippet from '../components/Snippet'
+import Link from '../components/Link'
+import Menu from '../components/Menu'
 
 import exampleHippiePlasma from '../examples/2D/fun_plasma.frag'
 import exampleRaymarcher from '../examples/raymarch/raymarch_cube.frag'
@@ -32,7 +32,6 @@ import operatorUnion from '../examples/operators/union.glsl'
 import operatorDifference from '../examples/operators/difference.glsl'
 import operatorUnionRound from '../examples/operators/unionRound.glsl'
 
-import Menu from './Menu'
 
 const Item = (props) => {
   const { type } = props

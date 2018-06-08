@@ -3,9 +3,9 @@ import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import styled from 'styled-components'
 
-import Menu from './Menu'
-import Button from './Button'
-import Group from './Group'
+import Menu from '../components/Menu'
+import Button from '../components/Button'
+import Group from '../components/Group'
 import { selectApp, selectConfig } from '../store/selectors';
 import { scale1x, scale2x, scale4x, setTexture0 } from '../store/config/actions'
 
