@@ -17,20 +17,20 @@ import exampleLattice from '../examples/raymarch/lattice.frag'
 import exampleFractal from '../examples/2D/julia.frag'
 import exampleMetaballs from '../examples/raymarch/metaballs_example.frag'
 
-import basicRaymarcher from '../basics/raymarch.glsl'
-import basicNormal from '../basics/normal.glsl'
+import basicRaymarcher from '../examples/basics/raymarch.glsl'
+import basicNormal from '../examples/basics/normal.glsl'
 
-import colorHsv2rgb from '../colors/hsv2rgb.glsl'
+import colorHsv2rgb from '../examples/colors/hsv2rgb.glsl'
 
-import primitiveSphere from '../primitives/sphere.glsl'
-import primitiveBox from '../primitives/box.glsl'
-import primitiveTorus from '../primitives/torus.glsl'
-import primitivePlane from '../primitives/plane.glsl'
+import primitiveSphere from '../examples/primitives/sphere.glsl'
+import primitiveBox from '../examples/primitives/box.glsl'
+import primitiveTorus from '../examples/primitives/torus.glsl'
+import primitivePlane from '../examples/primitives/plane.glsl'
 
-import operatorIntersection from '../operators/intersection.glsl'
-import operatorUnion from '../operators/union.glsl'
-import operatorDifference from '../operators/difference.glsl'
-import operatorUnionRound from '../operators/unionRound.glsl'
+import operatorIntersection from '../examples/operators/intersection.glsl'
+import operatorUnion from '../examples/operators/union.glsl'
+import operatorDifference from '../examples/operators/difference.glsl'
+import operatorUnionRound from '../examples/operators/unionRound.glsl'
 
 import Menu from './Menu'
 
