@@ -5,7 +5,7 @@ import {
   COMPILE_SUCCESS, COMPILE_ERROR,
   RESET,
   SELECT_EXAMPLE
-} from './actions'
+} from '../actions'
 
 const getCurrentShader = () => window.localStorage.getItem('shader') || defaultShader
 const saveShaderToLocalStorage = (shader) => window.localStorage.setItem('shader', shader)

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 
-import { selectExample } from '../store/editor/actions'
+import { selectExample } from '../store/actions'
 
 import Button from '../components/Button'
 import Group from '../components/Group'

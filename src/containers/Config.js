@@ -7,7 +7,7 @@ import Menu from '../components/Menu'
 import Button from '../components/Button'
 import Group from '../components/Group'
 import { selectApp, selectConfig } from '../store/selectors';
-import { scale1x, scale2x, scale4x, setTexture0 } from '../store/config/actions'
+import { scale1x, scale2x, scale4x, setTexture0 } from '../store/actions'
 
 const ButtonWrapper = styled.div`
   display: flex;

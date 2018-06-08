@@ -13,8 +13,7 @@ import Toolbox from './Toolbox'
 import Config from './Config'
 
 import { selectApp, selectEditor, selectConfig } from '../store/selectors'
-import { collapseMenus, toggleEditor } from '../store/app/actions'
-import { setShaderSource, setEditorSource } from '../store/editor/actions'
+import { collapseMenus, toggleEditor, setShaderSource, setEditorSource } from '../store/actions'
 
 class App extends Component {
   constructor(props) {

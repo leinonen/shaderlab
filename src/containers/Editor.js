@@ -7,7 +7,7 @@ import AceEditor from 'react-ace';
 import 'brace/mode/glsl';
 import 'brace/theme/gruvbox';
 import { selectEditor } from '../store/selectors';
-import { setEditorSource } from '../store/editor/actions'
+import { setEditorSource } from '../store/actions'
 
 // https://www.npmjs.com/package/brace
 // https://github.com/securingsincity/react-ace/blob/master/docs/Ace.md

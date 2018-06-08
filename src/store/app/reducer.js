@@ -1,6 +1,6 @@
 import {
   TOGGLE_EDITOR, TOGGLE_TOOLBOX, TOGGLE_CONFIG, COLLAPSE_MENUS,
-} from './actions'
+} from '../actions'
 
 const initialState = {
   showEditor: true,

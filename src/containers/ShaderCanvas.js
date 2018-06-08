@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { selectEditor, selectConfig } from '../store/selectors'
 
-import { compileSuccess, compileError } from '../store/editor/actions'
+import { compileSuccess, compileError } from '../store/actions'
 
 import vertexShaderSource from '../shader.vert'
 

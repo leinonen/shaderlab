@@ -4,8 +4,7 @@ import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 
 import { selectApp } from '../store/selectors'
-import { toggleConfig, toggleEditor, toggleToolbox } from '../store/app/actions'
-import { reset } from '../store/editor/actions'
+import { toggleConfig, toggleEditor, toggleToolbox, reset } from '../store/actions'
 
 import Icon from '../components/Icon'
 import Button, { ButtonLink } from '../components/Button'

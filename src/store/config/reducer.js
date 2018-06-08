@@ -1,7 +1,7 @@
 import {
   SCALE_1X, SCALE_2X, SCALE_4X,
   SET_TEXTURE0
-} from './actions'
+} from '../actions'
 
 const initialState = {
   scaling: 0.5,
