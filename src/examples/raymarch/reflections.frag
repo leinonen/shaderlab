@@ -252,7 +252,7 @@ vec3 lighting(vec3 p, vec3 normal, vec3 camPos, vec3 lightPos, float objId, bool
   return sceneColor;  
 }
 
-vec3 toGamma(vec3 v) { return pow(v, vec3(1.0 / 1.3)); }
+vec3 toGamma(vec3 v) { return pow(v, vec3(1.0 / 1.7)); }
 
 void main( void ) {
   vec2 aspect = vec2(resolution.x/resolution.y, 1.0);
@@ -281,10 +281,10 @@ void main( void ) {
   hit = rayMarch(p, reflect(rd, normal), stepSizeRef, clipNearRef, clipFar);
   vec3 pRef = ro + rd * hit.x;
   if (objId == WORLD_ID || hit.x >= clipFar) {
-    gl_FragColor = vec4(clamp(sceneColor, 0.0, 1.0), 1.0);
+    gl_FragColor = vec4(clamp(toGamma(sceneColor), 0.0, 1.0), 1.0);
     return;
   }
   sceneColor += lighting(pRef, getNormal(pRef), pRef, lightPos, hit.y, true);
 
-  gl_FragColor = vec4(clamp(sceneColor, 0.0, 1.0), 1.0);
+  gl_FragColor = vec4(clamp(toGamma(sceneColor), 0.0, 1.0), 1.0);
 }
