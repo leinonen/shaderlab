@@ -22,21 +22,22 @@ const float clipNearRef = 0.001;
 vec3 lightColor  = vec3(1.0, 1, 0.8);
 
 struct Material {
-  float ambient;
-  float diffuse;
+  float Ka;
+  float Kd;
+  float Ks;
+  float specularPower; // how shiny the object is
   vec3 color;
-  float specularPower;
-  float reflective;
-  bool checkers;
+  float Kr;      // how much light to reflect
+  bool checkers; // use checkers pattern
 };
 
-const Material defaultMaterial = Material(0.1, 0.9, vec3(1,1,1), 4.0, 0.0, false);
-const Material floorMaterial   = Material(0.1, 0.9, vec3(1,1,1), 4.0, 0.35, true);
-const Material boxMaterial     = Material(0.1, 0.9, vec3(1,1,1), 134.0, 0.35, false);
-const Material sphere1Material = Material(0.1, 0.9, vec3(1,.2,.2), 14.0, 0.35, false);
-const Material sphere2Material = Material(0.3, 0.7, vec3(.2,1,.2), 112.0, 0.35, false);
-const Material sphere3Material = Material(0.3, 0.7, vec3(.2,.2,1), 12.0, 0.35, false);
-const Material worldMaterial   = Material(0.2, 0.8, vec3(1,.3,.6), 1.0, 0.35, false);
+const Material defaultMaterial = Material(0.1, 0.8, 0.2, 4.0, vec3(1,1,1), 0.0, false);
+const Material floorMaterial   = Material(0.1, 0.8, 0.2, 4.0, vec3(1,1,1), 0.35, true);
+const Material boxMaterial     = Material(0.3, 0.9, 0.9, 16.0, vec3(1,1,1), 0.35, false);
+const Material sphere1Material = Material(0.1, 0.8, 0.9, 128.0, vec3(1,.2,.2), 0.35, false);
+const Material sphere2Material = Material(0.1, 0.8, 0.9, 128.0, vec3(.2,1,.2), 0.35, false);
+const Material sphere3Material = Material(0.1, 0.8, 0.2, 32.0, vec3(.2,.2,1), 0.35, false);
+const Material worldMaterial   = Material(0.1, 0.8, 0.2, 1.0, vec3(1,.3,.6), 0.0, false);
 
 const float FLOOR_ID = 1.0;
 const float BOX_ID = 2.0;
@@ -219,10 +220,6 @@ float softShadow(vec3 ro, vec3 rd, float start, float end, float k){
 vec3 lighting(vec3 p, vec3 normal, vec3 camPos, vec3 lightPos, float objId, bool reflectionPass) {
   Material material = getObjectMaterial(p, objId);
   
-  if (reflectionPass && material.reflective == 0.0) {
-    return vec3(0);
-  }
-  
   vec3 lightDirection = lightPos - p;
   vec3 eyeDirection = camPos - p;
 
@@ -235,24 +232,19 @@ vec3 lighting(vec3 p, vec3 normal, vec3 camPos, vec3 lightPos, float objId, bool
   float specular = pow(max( 0.0, dot(reflect(-lightDirection, normal), normalize(eyeDirection)) ), specularPower);
 
   float ao = 0.5 + 0.5 * calculateAO(p, normal);
-  float shadowCol = 1.0;
-  if (!reflectionPass) {
-    float stopThreshold = 0.5;
-    shadowCol = softShadow(p, lightDirection, stopThreshold * 2.0, len, 128.0);
-  }
+  float stopThreshold = 0.5;
+  float shadow = reflectionPass 
+    ? 1.0 
+    : softShadow(p, lightDirection, stopThreshold * 2.0, len, 128.0);
+
   vec3 objectColor = material.color * (material.checkers ? checkers(p*2.0) : 1.0);
 
-
-  vec3 sceneColor  = vec3(0);
-  sceneColor += (objectColor*(diffuse*material.diffuse+material.ambient)+specular)*lightColor*lightAtten * ao * shadowCol;
-
-  if (reflectionPass) {
-    sceneColor *= material.reflective;
-  }
-  return sceneColor;  
+  return (objectColor*(diffuse*material.Kd + material.Ka) + specular * material.Ks) * 
+         lightColor * lightAtten * ao * shadow * 
+        (reflectionPass ? material.Kr : 1.0);
 }
 
-vec3 toGamma(vec3 v) { return pow(v, vec3(1.0 / 1.7)); }
+vec3 toGamma(vec3 v) { return pow(v, vec3(1.0 / 1.3)); }
 
 void main( void ) {
   vec2 aspect = vec2(resolution.x/resolution.y, 1.0);
@@ -266,6 +258,7 @@ void main( void ) {
   lightPos.x = 2. * sin(-time * PI * 0.1);
   camPos.y = 0.3 + cos(time * PI * 0.23);
 
+  vec3 sceneColor = vec3(0);
   vec3 ro = camPos; 
   vec3 rd = rayDirection(uv, camPos, lookAt);
 
@@ -273,18 +266,21 @@ void main( void ) {
   vec2 hit = rayMarch(ro, rd, stepSize, clipNear, clipFar);
   vec3 p = ro + rd * hit.x;
   vec3 normal = getNormal(p);
-  vec3 sceneColor = lighting(p, normal, camPos, lightPos, hit.y, false);
+  sceneColor += lighting(p, normal, camPos, lightPos, hit.y, false);
   
-  float objId = hit.y;
-
-  // reflection pass
-  hit = rayMarch(p, reflect(rd, normal), stepSizeRef, clipNearRef, clipFar);
-  vec3 pRef = ro + rd * hit.x;
-  if (objId == WORLD_ID || hit.x >= clipFar) {
+  // world (wrapping sphere) should not reflect
+  if (hit.y == WORLD_ID) {
     gl_FragColor = vec4(clamp(toGamma(sceneColor), 0.0, 1.0), 1.0);
     return;
   }
-  sceneColor += lighting(pRef, getNormal(pRef), pRef, lightPos, hit.y, true);
+
+  // reflection pass
+  ro = p;
+  rd = reflect(rd, normal);
+  hit = rayMarch(p, rd, stepSizeRef, clipNearRef, clipFar);
+  p = ro + rd * hit.x;
+  normal = getNormal(p);
+  sceneColor += lighting(p, normal, ro, lightPos, hit.y, true);
 
   gl_FragColor = vec4(clamp(toGamma(sceneColor), 0.0, 1.0), 1.0);
 }
