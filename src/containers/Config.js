@@ -6,6 +6,9 @@ import styled from 'styled-components'
 import Menu from '../components/Menu'
 import Button from '../components/Button'
 import Group from '../components/Group'
+import TexturePicker from '../components/TexturePicker'
+import Snippet from '../components/Snippet'
+
 import { selectApp, selectConfig } from '../store/selectors';
 import { scale1x, scale2x, scale4x, setTexture0 } from '../store/actions'
 
@@ -81,8 +84,11 @@ class Config extends Component {
 
   render() {
     const { app, config, scale1x, scale2x, scale4x, setTexture0 } = this.props
-    const { scaling } = config
-    const { showScaling, showTextures, texture0 } = this.state
+    const { scaling, texture0 } = config
+    const { showScaling, showTextures } = this.state
+    const uniformSource = `uniform sampler2D texture0;
+vec3 color = texture2D(texture0, uv).rgb;`
+
     return (
       <Menu expanded={app.showConfig}>
         <Group name="Scaling" expanded={showScaling} onExpandToggle={this.toggleScaling} >
@@ -94,16 +100,13 @@ class Config extends Component {
           <p>Lower scaling will improve performance but reduce image quality</p>
         </Group>
         <Group name="Textures" expanded={showTextures} onExpandToggle={this.toggleTextures} >
-          <p>Texture can be included using <strong>uniform sampler2D texture0;</strong></p>
+          <Snippet name="Texture uniform" source={uniformSource} />
           <TextureRow>
             <div className="shrink">
               <label>texture0</label>
             </div>
             <div>
-              <Input type="text" name="texture0" value={texture0} onChange={this.inputChange} />
-            </div>
-            <div className="shrink">
-              <Button type="button" onClick={this.applyTexture0}>Apply</Button>
+              <TexturePicker currentTexture={texture0} onSelect={this.props.setTexture0} />
             </div>
           </TextureRow>
         </Group>
