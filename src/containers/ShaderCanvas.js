@@ -26,6 +26,7 @@ class ShaderCanvas extends Component {
     this.compile(editor.shaderSource)
     this.applyTexture(config.texture0)
     this.paint()
+    this.loadCubeMaps()
   }
 
   shouldComponentUpdate() {
@@ -162,7 +163,6 @@ class ShaderCanvas extends Component {
         this.props.compileError('Error loading texture')
       }
       image.addEventListener('load', () => {
-        // Now that the image has loaded make copy it to the texture.
         gl.bindTexture(gl.TEXTURE_2D, texture)
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true)
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image)
@@ -178,13 +178,61 @@ class ShaderCanvas extends Component {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE)
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-        // this.props.compileSuccess('Texture loaded')
       })
 
       return texture
     } catch (e) {
       return null;
     }
+  }
+
+  loadCubeMaps() {
+    /*
+    right
+    left
+    top
+    bottom
+    front
+    back
+    */
+    let urls = [
+     /* '/textures/cubemap/darkskies_rt.jpg',
+      '/textures/cubemap/darkskies_lf.jpg',
+      '/textures/cubemap/darkskies_up.jpg',
+      '/textures/cubemap/darkskies_dn.jpg',
+      '/textures/cubemap/darkskies_ft.jpg',
+      '/textures/cubemap/darkskies_bk.jpg',*/
+      '/textures/cubemap/posx.jpg',
+      '/textures/cubemap/negx.jpg',
+      '/textures/cubemap/posy.jpg',
+      '/textures/cubemap/negy.jpg',
+      '/textures/cubemap/posz.jpg',
+      '/textures/cubemap/negz.jpg'
+    ]
+    
+    let gl = this.gl
+    const cubemapTexture = gl.createTexture()
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubemapTexture)
+    // gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+    // gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+    // gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+
+    for(let i=0; i<6; i++) {     
+      const image = new Image()
+      image.crossOrigin = 'Anonymous';
+      image.src = urls[i]
+      image.onerror = (e) => {
+        console.log(e)
+        this.props.compileError('Error loading texture')
+      }
+      image.addEventListener('load', () => {
+        gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      })
+    }
+    let cubemapLoc = gl.getUniformLocation(this.program, 'cubemap')
+    gl.uniform1i(cubemapLoc, 0)
   }
 
   paint() {
