@@ -21,10 +21,10 @@ const Wraps = styled.div`
 
 function TexturePicker({ currentTexture, onSelect }) {
   const textures = [
-    '/textures/tunnel.jpg',
-    '/textures/dots.jpg',
-    '/textures/flesh.jpg',
-    '/textures/spongebob.jpg'
+    { url: '/textures/tunnel.jpg', thumb: '/textures/tunnel_thumb.jpg' },
+    { url: '/textures/dots.jpg', thumb: '/textures/dots_thumb.jpg' },
+    { url: '/textures/flesh.jpg', thumb: '/textures/flesh_thumb.jpg' },
+    { url: '/textures/spongebob.jpg', thumb: '/textures/spongebob_thumb.jpg' }
   ]
   return (
     <Wraps>
@@ -33,9 +33,9 @@ function TexturePicker({ currentTexture, onSelect }) {
           <div>
             <img
               key={idx}
-              src={texture}
-              onClick={(e) => onSelect(texture)}
-              className={currentTexture === texture ? 'active' : ''}
+              src={texture.thumb}
+              onClick={(e) => onSelect(texture.url)}
+              className={currentTexture === texture.url ? 'active' : ''}
             />
           </div>
         )
