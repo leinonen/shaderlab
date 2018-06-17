@@ -4,19 +4,12 @@ import { createSelector } from 'reselect'
 
 import { selectExample } from '../store/actions'
 
-import Button from '../components/Button'
 import Group from '../components/Group'
-import Example from '../components/Example'
+import Examples from '../components/Examples'
 import Snippet from '../components/Snippet'
 import Link from '../components/Link'
 import Menu from '../components/Menu'
 import Builtins from '../components/Builtins'
-
-import exampleHippiePlasma from '../examples/2D/fun_plasma.frag'
-import exampleRaymarcher from '../examples/raymarch/raymarch_cube.frag'
-import exampleLattice from '../examples/raymarch/lattice.frag'
-import exampleFractal from '../examples/2D/julia.frag'
-import exampleMetaballs from '../examples/raymarch/metaballs_example.frag'
 
 import basicRaymarcher from '../examples/basics/raymarch.glsl'
 import basicNormal from '../examples/basics/normal.glsl'
@@ -37,8 +30,8 @@ import operatorUnionRound from '../examples/operators/unionRound.glsl'
 const Item = (props) => {
   const { type } = props
   switch (type) {
-    case 'example': {
-      return <Example {...props} />
+    case 'examples': {
+      return <Examples {...props} />
     }
     case 'snippet': {
       return <Snippet {...props} />
@@ -68,11 +61,7 @@ class Toolbox extends Component {
         {
           name: 'Examples',
           items: [
-            { type: 'example', name: 'Plasma (Default)', source: exampleHippiePlasma, thumbnail: 'plasma.png' },
-            { type: 'example', name: 'Julia Fractal', source: exampleFractal, thumbnail: 'julia.png' },
-            { type: 'example', name: 'Raymarched Cube', source: exampleRaymarcher, thumbnail: 'cube.png' },
-            { type: 'example', name: 'Raymarched Lattice', source: exampleLattice, thumbnail: 'lattice.png' },
-            { type: 'example', name: 'Raymarched Metaballs', source: exampleMetaballs, thumbnail: 'metaballs.png' }
+            { type: 'examples' }
           ]
         },
         {

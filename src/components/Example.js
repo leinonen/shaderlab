@@ -5,18 +5,17 @@ import Button from './Button'
 
 const ImageWrapper = styled.div`
   box-sizing: border-box;
-  width: 100%;
-  margin-bottom: 2rem;
+  flex: 0 0 33%;
+  padding: 0.5rem;
   & img {
-    display: block;
-    margin: 0 auto;
     cursor: pointer;
+    max-width: 100%;
   };
-  & button {
-    width: 50%;
-    margin: 0 auto;
-    display: block;
-    margin-top: -3rem;
+  & div {
+    width: 100%;
+    text-align: center;
+    color: #777;
+    line-height: 2rem;
   }
 `
 
@@ -24,9 +23,10 @@ function Example({ name, thumbnail, source, onSelectExample }) {
   return (
     <ImageWrapper>
       <img src={`/assets/${thumbnail}`} onClick={() => { onSelectExample(source) }} />
-      <Button onClick={() => { onSelectExample(source) }}>{name}</Button>
+      <div>{name}</div>
     </ImageWrapper>
   )
 }
+
 
 export default Example
