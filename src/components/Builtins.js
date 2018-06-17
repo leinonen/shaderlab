@@ -6,6 +6,10 @@ const Wrapper = styled.div`
     padding: 0;
     margin: 0;
     list-style-type: none;
+
+    li {
+      color: #777;
+    }
   }
 `
 
