@@ -7,8 +7,10 @@ import {
   SELECT_EXAMPLE
 } from '../actions'
 
-const getCurrentShader = () => window.localStorage.getItem('shader') || defaultShader
-const saveShaderToLocalStorage = (shader) => window.localStorage.setItem('shader', shader)
+import { getItem, setItem } from '../../utils/storage'
+
+const getCurrentShader = () => getItem('shader') || defaultShader
+const saveShaderToLocalStorage = (shader) => setItem('shader', shader)
 
 const initialState = {
   compileSuccess: true,
