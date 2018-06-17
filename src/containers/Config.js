@@ -108,7 +108,8 @@ class Config extends Component {
     return (
       <Menu expanded={app.showConfig}>
         <Group name="Scaling" expanded={showScaling} onExpandToggle={this.toggleScaling} >
-          <p>Lower scaling will improve performance but reduce image quality</p>
+          <p>Lower scaling will improve performance but reduce image quality.</p>
+          <p>Useful when building complex shaders that your GPU can't handle :)</p>
           <TextureRow>
             <div className="shrink">
               <label>Scale Factor</label>
