@@ -5,7 +5,7 @@ const Wraps = styled.div`
   display: flex;
   flex-wrap: wrap;
   & > div {
-    flex: 1 1 25%;
+    flex: 1 1 16%;
     & > img {
       max-width: 100%;
       box-sizing: border-box;
@@ -19,13 +19,8 @@ const Wraps = styled.div`
   }
 `
 
-function TexturePicker({ currentTexture, onSelect }) {
-  const textures = [
-    { url: '/textures/tunnel.jpg', thumb: '/textures/tunnel_thumb.jpg' },
-    { url: '/textures/dots.jpg', thumb: '/textures/dots_thumb.jpg' },
-    { url: '/textures/flesh.jpg', thumb: '/textures/flesh_thumb.jpg' },
-    { url: '/textures/spongebob.jpg', thumb: '/textures/spongebob_thumb.jpg' }
-  ]
+function TexturePicker({ textures, currentTexture, onSelect }) {
+
   return (
     <Wraps>
       {
