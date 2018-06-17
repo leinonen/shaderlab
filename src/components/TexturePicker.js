@@ -30,9 +30,8 @@ function TexturePicker({ currentTexture, onSelect }) {
     <Wraps>
       {
         textures.map((texture, idx) =>
-          <div>
+          <div key={idx}>
             <img
-              key={idx}
               src={texture.thumb}
               onClick={(e) => onSelect(texture.url)}
               className={currentTexture === texture.url ? 'active' : ''}
