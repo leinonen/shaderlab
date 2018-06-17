@@ -6,6 +6,9 @@ const GroupWrapper = styled.div`
   box-sizing: border-box;
   padding: 1rem;
   margin-bottom: 1rem;
+  p {
+    color: #777;
+  }
 `
 
 const GroupName = styled.h2`

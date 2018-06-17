@@ -16,8 +16,8 @@ const Row = styled.div`
 const TextArea = styled.textarea`
   width: 100%;
   padding: 0.5rem;
-  color: white;
-  background-color: #333;
+  color: #777;
+  background-color: rgba(0,0,0, 0.3);
   border: none;
   resize: none;
 `
