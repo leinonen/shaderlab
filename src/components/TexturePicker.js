@@ -11,7 +11,7 @@ const Wraps = styled.div`
       box-sizing: border-box;
       border: 2px solid transparent;
       border-radius: 4px;
-      cursor: pointer;
+      cursor: ${props => props.disabled ? 'inherit' : 'pointer'};
       &.active {
         border-color: rgba(200, 255, 0, 0.7);
       }
@@ -19,16 +19,16 @@ const Wraps = styled.div`
   }
 `
 
-function TexturePicker({ textures, currentTexture, onSelect }) {
+function TexturePicker({ textures, currentTexture, onSelect, disabled }) {
 
   return (
-    <Wraps>
+    <Wraps disabled={disabled}>
       {
         textures.map((texture, idx) =>
           <div key={idx}>
             <img
               src={texture.thumb}
-              onClick={(e) => onSelect(texture.url)}
+              onClick={(e) => { if (!disabled) { onSelect(texture.url) } }}
               className={currentTexture === texture.url ? 'active' : ''}
             />
           </div>
@@ -36,6 +36,10 @@ function TexturePicker({ textures, currentTexture, onSelect }) {
       }
     </Wraps>
   )
+}
+
+TexturePicker.defaultProps = {
+  disabled: false
 }
 
 export default TexturePicker
