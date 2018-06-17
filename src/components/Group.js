@@ -5,11 +5,11 @@ const GroupWrapper = styled.div`
   background-color: rgba(40,40,40, 0.4);
   box-sizing: border-box;
   padding: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 `
 
 const GroupName = styled.h2`
-  margin: 0.5rem 0;
+  margin: 0;
   cursor: pointer;
   font-size: 1.2rem;
 `
