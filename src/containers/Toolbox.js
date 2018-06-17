@@ -175,8 +175,8 @@ class Toolbox extends Component {
             {...group}
           >
             {
-              group.items.map(item => (
-                <Item key={item.name} onSelectExample={selectExample} {...item} />
+              group.items.map((item, index) => (
+                <Item key={`${item.type}_${index}`} onSelectExample={selectExample} {...item} />
               ))
             }
           </Group>
