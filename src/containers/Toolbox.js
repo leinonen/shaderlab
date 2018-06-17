@@ -10,6 +10,7 @@ import Example from '../components/Example'
 import Snippet from '../components/Snippet'
 import Link from '../components/Link'
 import Menu from '../components/Menu'
+import Builtins from '../components/Builtins'
 
 import exampleHippiePlasma from '../examples/2D/fun_plasma.frag'
 import exampleRaymarcher from '../examples/raymarch/raymarch_cube.frag'
@@ -45,6 +46,9 @@ const Item = (props) => {
     case 'link': {
       return <Link {...props} />
     }
+    case 'builtin': {
+      return <Builtins />
+    }
     default:
       return null
   }
@@ -55,6 +59,12 @@ class Toolbox extends Component {
     super(props)
     this.state = {
       groups: [
+        {
+          name: 'GLSL Functions',
+          items: [
+            { type: 'builtin' }
+          ]
+        },
         {
           name: 'Examples',
           items: [
