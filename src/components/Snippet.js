@@ -4,6 +4,13 @@ import Button from './Button'
 
 const Row = styled.div`
   margin-bottom: 0.5rem;
+  & > .butts {
+    position: relative;
+    & > button {
+      position: absolute;
+      right: 0;
+    }
+  }
 `
 
 const TextArea = styled.textarea`
@@ -28,10 +35,10 @@ class Snippet extends Component {
   copy() {
     this.textRef.select()
     document.execCommand("copy");
-    this.setState({ msg: 'Copied to clipboard' })
+    this.setState({ msg: 'Copied!' })
     setTimeout(() => {
       this.setState({ msg: 'Copy' })
-    }, 1000);
+    }, 700);
   }
 
   render() {
@@ -40,7 +47,9 @@ class Snippet extends Component {
     return (
       <Row>
         <h3>{name}</h3>
-        <Button onClick={this.copy}>{this.state.msg}</Button>
+        <div className="butts">
+          <Button onClick={this.copy}>{this.state.msg}</Button>
+        </div>
         <TextArea
           autocomplete="off"
           autocorrect="off"
