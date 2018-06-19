@@ -10,6 +10,7 @@ const Button = styled.button`
   transition: border-color 0.25s ease;
   cursor: pointer;
   outline-color: rgba(200, 255, 0, 0.8);
+  font-family: 'Play', sans-serif;
   font-size: 1rem;
   line-height: 2rem;
   font-weight: bold;

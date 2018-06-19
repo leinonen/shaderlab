@@ -5,6 +5,7 @@ body {
   font-size: 100%;
   font-family: Courier;
   overflow: hidden;
+  font-family: 'Play', sans-serif;
 }
 
 canvas {
