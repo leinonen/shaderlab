@@ -139,8 +139,8 @@ void main( void ) {
 	
   vec3 ro = camPos; 
   vec3 rd = rayDirection(uv, camPos, lookAt);
-  rd.xy *= rot2( PI*sin(-time*0.5)/2.0 );
-  rd.xz *= rot2( PI*sin(-time*0.5)/4.0 );
+  rd.xy *= rot2( PI*sin(-time*0.5)/2.0 + cos(-0.01*time * PI)*PI*1.);
+  rd.xz *= rot2( PI*sin(-time*0.8)/3.0 + cos(0.01*time * PI)*PI*2. );  
 
   float dist = rayMarch(ro, rd, 0.2, 0.01, 150.0);
   vec3 p = ro + rd * dist;
