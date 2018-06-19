@@ -7,16 +7,11 @@ import {
   SELECT_EXAMPLE
 } from '../actions'
 
-import { getItem, setItem } from '../../utils/storage'
-
-const getCurrentShader = () => getItem('shader') || defaultShader
-const saveShaderToLocalStorage = (shader) => setItem('shader', shader)
-
 const initialState = {
   compileSuccess: true,
   compileMessage: '',
-  shaderSource: getCurrentShader(),
-  editorSource: getCurrentShader(),
+  shaderSource: defaultShader,
+  editorSource: defaultShader,
 }
 
 const reducer = (state = initialState, action) => {
@@ -28,7 +23,6 @@ const reducer = (state = initialState, action) => {
       return { ...state, editorSource: action.payload }
     }
     case COMPILE_SUCCESS: {
-      saveShaderToLocalStorage(action.payload)
       return { ...state, compileSuccess: true, compileMessage: 'Compile Successful' }
     }
     case COMPILE_ERROR: {
