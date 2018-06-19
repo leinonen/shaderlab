@@ -8,7 +8,8 @@ const Row = styled.div`
     position: relative;
     & > button {
       position: absolute;
-      right: 0;
+      right: 0.5rem;
+      top: 0.5rem;
     }
   }
 `
@@ -18,8 +19,10 @@ const TextArea = styled.textarea`
   padding: 0.5rem;
   color: #777;
   background-color: rgba(0,0,0, 0.3);
-  border: none;
+  border: 1px solid rgba(0,0,0, 0.3);
+  border-radius: 4px;
   resize: none;
+  outline: none;
 `
 // https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
 
