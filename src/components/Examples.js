@@ -27,8 +27,8 @@ function Examples({onSelectExample}) {
   return (
     <Wrapper>
       {
-        examples.map(example =>
-          <Example onSelectExample={onSelectExample} {...example} />
+        examples.map((example, index) =>
+          <Example key={index} onSelectExample={onSelectExample} {...example} />
         )
       }
     </Wrapper>
