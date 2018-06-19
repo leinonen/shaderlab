@@ -50,8 +50,8 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener(this.keydownListener)
-    window.removeEventListener(this.resizeHandler)
+    window.removeEventListener('keydown', this.keydownListener)
+    window.removeEventListener('resize', this.resizeHandler)
   }
 
   onFullscreen() {

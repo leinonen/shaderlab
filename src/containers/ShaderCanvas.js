@@ -24,9 +24,11 @@ class ShaderCanvas extends Component {
     this.fpstime = 0
     this.success = false
     this.compile(editor.shaderSource)
-    this.applyTexture(config.texture0)
+    if (this.success) {
+      this.applyTexture(config.texture0)
+      this.loadCubeMaps()
+    }
     this.paint()
-    this.loadCubeMaps()
   }
 
   shouldComponentUpdate() {
