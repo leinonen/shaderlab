@@ -31,6 +31,9 @@ const Message = styled.div`
 const Credz = styled.div`
   flex: 1 1 30%;
   text-align: right;
+  a, a:active, a:visited {
+    color: white;
+  }
 `
 
 const StatusBar = (props) => {
@@ -39,7 +42,7 @@ const StatusBar = (props) => {
   return (
     <StatusBarWrapper {...props} error={editor.compileSuccess === false}>
       <Message>{editor.compileMessage}</Message>
-      <Credz>{name}/{version} by {author}</Credz>
+      <Credz>{name}/{version} by <a href="http://leinonen.se">{author}</a></Credz>
     </StatusBarWrapper>
   )
 }
