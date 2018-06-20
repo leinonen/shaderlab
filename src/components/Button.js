@@ -9,6 +9,7 @@ const Button = styled.button`
   border-radius: 4px;
   transition: border-color 0.25s ease;
   cursor: pointer;
+  outline: none;
   outline-color: rgba(200, 255, 0, 0.8);
   font-family: 'Play', sans-serif;
   font-size: 1rem;

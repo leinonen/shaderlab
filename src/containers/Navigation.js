@@ -38,13 +38,13 @@ function Navigation(props) {
       <Button title="Factory Reset" onClick={props.reset}>
         <Icon name="trash-alt" />
       </Button>
-      <Button title="Config" onClick={props.toggleConfig}>
+      <Button title="Config" onClick={props.toggleConfig} active={app.showConfig}>
         <Icon name="cog" />
       </Button>
-      <Button title="Toolbox" onClick={props.toggleToolbox}>
+      <Button title="Toolbox" onClick={props.toggleToolbox} active={app.showToolbox}>
         <Icon name="toolbox" />
       </Button>
-      <Button title="Toggle Editor (Ctrl + Space)" onClick={props.toggleEditor}>
+      <Button title="Toggle Editor (Ctrl + Space)" onClick={props.toggleEditor} active={app.showEditor}>
         <Icon name="edit" />
       </Button>
       <Button title="Fullscreen" onClick={props.onFullscreen}>
