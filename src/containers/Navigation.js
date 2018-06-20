@@ -47,7 +47,7 @@ function Navigation(props) {
       <Button title="Toggle Editor (Ctrl + Space)" onClick={props.toggleEditor} active={app.showEditor}>
         <Icon name="edit" />
       </Button>
-      <Button title="Fullscreen" onClick={props.onFullscreen}>
+      <Button title="Fullscreen" onClick={props.onFullscreen} active={app.showFullscreen}>
         <Icon name="expand-arrows-alt" />
       </Button>
     </ButtonWrapper>

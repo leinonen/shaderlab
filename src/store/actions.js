@@ -7,6 +7,9 @@ export const toggleToolbox = () => ({ type: TOGGLE_TOOLBOX })
 export const TOGGLE_CONFIG = 'TOGGLE_CONFIG'
 export const toggleConfig = () => ({ type: TOGGLE_CONFIG })
 
+export const TOGGLE_FULLSCREEN = 'TOGGLE_FULLSCREEN'
+export const toggleFullscreen = () => ({ type: TOGGLE_FULLSCREEN })
+
 export const COLLAPSE_MENUS = 'COLLAPSE_MENUS'
 export const collapseMenus = () => ({ type: COLLAPSE_MENUS })
 

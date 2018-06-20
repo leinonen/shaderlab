@@ -13,7 +13,7 @@ import Toolbox from './Toolbox'
 import Config from './Config'
 
 import { selectApp, selectEditor, selectConfig } from '../store/selectors'
-import { collapseMenus, toggleEditor, setShaderSource, setEditorSource } from '../store/actions'
+import { collapseMenus, toggleEditor, setShaderSource, setEditorSource, toggleFullscreen } from '../store/actions'
 
 class App extends Component {
   constructor(props) {
@@ -60,9 +60,11 @@ class App extends Component {
         let el = document.documentElement
         let rfs = el.requestFullscreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullscreen
         rfs.call(el)
+        this.props.toggleFullscreen()
       } else {
         let cfs = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen || document.msCancelFullscreen;
         cfs.call(document)
+        this.props.toggleFullscreen()
       }
     })
   }
@@ -99,7 +101,8 @@ const mapDispatchToProps = {
   setEditorSource,
   setShaderSource,
   collapseMenus,
-  toggleEditor
+  toggleEditor,
+  toggleFullscreen
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

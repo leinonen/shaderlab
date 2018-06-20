@@ -1,11 +1,12 @@
 import {
-  TOGGLE_EDITOR, TOGGLE_TOOLBOX, TOGGLE_CONFIG, COLLAPSE_MENUS,
+  TOGGLE_EDITOR, TOGGLE_TOOLBOX, TOGGLE_CONFIG, TOGGLE_FULLSCREEN, COLLAPSE_MENUS,
 } from '../actions'
 
 const initialState = {
   showEditor: true,
   showToolbox: false,
   showConfig: false,
+  showFullscreen: false,
 }
 
 const reducer = (state = initialState, action) => {
@@ -18,6 +19,9 @@ const reducer = (state = initialState, action) => {
     }
     case TOGGLE_CONFIG: {
       return { ...state, showConfig: !state.showConfig, showToolbox: false }
+    }
+    case TOGGLE_FULLSCREEN: {
+      return { ...state, showFullscreen: !state.showFullscreen }
     }
     case COLLAPSE_MENUS: {
       return { ...state, showConfig: false, showToolbox: false }
