@@ -10,9 +10,15 @@ import TexturePicker from '../components/TexturePicker'
 import Snippet from '../components/Snippet'
 
 import { selectApp, selectConfig } from '../store/selectors';
-import { scale1x, scale2x, scale4x, setTexture0 } from '../store/actions'
+import { 
+  scale1x, scale2x, scale4x, 
+  setTexture0, setTexture1, setTexture2, setTexture3
+} from '../store/actions'
 
 const textureSource = `uniform sampler2D texture0;
+uniform sampler2D texture1;
+uniform sampler2D texture2;
+uniform sampler2D texture3;
 vec3 color = texture2D(texture0, uv).rgb;`
 
 const cubemapSource = `uniform samplerCube cubemap;
@@ -101,8 +107,13 @@ class Config extends Component {
   }
 
   render() {
-    const { app, config, scale1x, scale2x, scale4x, setTexture0 } = this.props
-    const { scaling, texture0 } = config
+    const { 
+      app, config, 
+      scale1x, scale2x, scale4x, 
+      setTexture0, setTexture1, setTexture2, setTexture3
+    } = this.props
+
+    const { scaling, texture0, texture1, texture2, texture3 } = config
     const { showScaling, showTextures, showCubemaps } = this.state
 
     return (
@@ -124,13 +135,37 @@ class Config extends Component {
           </TextureRow>
         </Group>
         <Group name="Textures" expanded={showTextures} onExpandToggle={this.toggleTextures} >
-          <Snippet name="Texture uniform" source={textureSource} />
+          <Snippet name="Texture uniforms" source={textureSource} />
           <TextureRow>
             <div className="shrink">
               <label>texture0</label>
             </div>
             <div>
               <TexturePicker textures={textures} currentTexture={texture0} onSelect={this.props.setTexture0} />
+            </div>
+          </TextureRow>
+          <TextureRow>
+            <div className="shrink">
+              <label>texture1</label>
+            </div>
+            <div>
+              <TexturePicker textures={textures} currentTexture={texture1} onSelect={this.props.setTexture1} />
+            </div>
+          </TextureRow>
+          <TextureRow>
+            <div className="shrink">
+              <label>texture2</label>
+            </div>
+            <div>
+              <TexturePicker textures={textures} currentTexture={texture2} onSelect={this.props.setTexture2} />
+            </div>
+          </TextureRow>
+          <TextureRow>
+            <div className="shrink">
+              <label>texture3</label>
+            </div>
+            <div>
+              <TexturePicker textures={textures} currentTexture={texture3} onSelect={this.props.setTexture3} />
             </div>
           </TextureRow>
         </Group>
@@ -160,7 +195,10 @@ const mapDispatchToProps = {
   scale1x,
   scale2x,
   scale4x,
-  setTexture0
+  setTexture0,
+  setTexture1,
+  setTexture2,
+  setTexture3
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Config);

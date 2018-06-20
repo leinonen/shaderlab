@@ -23,6 +23,14 @@ export const scale4x = () => ({ type: SCALE_4X })
 export const SET_TEXTURE0 = 'SET_TEXTURE0'
 export const setTexture0 = (payload) => ({ type: SET_TEXTURE0, payload })
 
+export const SET_TEXTURE1 = 'SET_TEXTURE1'
+export const setTexture1 = (payload) => ({ type: SET_TEXTURE1, payload })
+
+export const SET_TEXTURE2 = 'SET_TEXTURE2'
+export const setTexture2 = (payload) => ({ type: SET_TEXTURE2, payload })
+
+export const SET_TEXTURE3 = 'SET_TEXTURE3'
+export const setTexture3 = (payload) => ({ type: SET_TEXTURE3, payload })
 
 
 export const SET_SHADER_SOURCE = 'SET_SHADER_SOURCE'

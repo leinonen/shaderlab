@@ -25,7 +25,10 @@ class ShaderCanvas extends Component {
     this.success = false
     this.compile(editor.shaderSource)
     if (this.success) {
-      this.applyTexture(config.texture0)
+      this.applyTexture(0, config.texture0)
+      this.applyTexture(1, config.texture1)
+      this.applyTexture(2, config.texture2)
+      this.applyTexture(3, config.texture3)
       this.loadCubeMaps()
     }
     this.paint()
@@ -44,7 +47,16 @@ class ShaderCanvas extends Component {
       this.canvas.height = nextProps.height
     }
     if (this.props.config.texture0 !== nextProps.config.texture0) {
-      this.applyTexture(nextProps.config.texture0)
+      this.applyTexture(0, nextProps.config.texture0)
+    }
+    if (this.props.config.texture1 !== nextProps.config.texture1) {
+      this.applyTexture(1, nextProps.config.texture1)
+    }
+    if (this.props.config.texture2 !== nextProps.config.texture2) {
+      this.applyTexture(2, nextProps.config.texture2)
+    }
+    if (this.props.config.texture3 !== nextProps.config.texture3) {
+      this.applyTexture(3, nextProps.config.texture3)
     }
   }
 
@@ -56,12 +68,11 @@ class ShaderCanvas extends Component {
     console.log(e)
   }
 
-  applyTexture(textureUrl) {
+  applyTexture(unit = 0, textureUrl) {
     let gl = this.gl
-    let texture0Loc = gl.getUniformLocation(this.program, 'texture0')
+    let textureLoc = gl.getUniformLocation(this.program, `texture${unit}`)
     let texture = this.loadTexture(textureUrl, true)
-    let unit = 0;
-    gl.uniform1i(texture0Loc, unit)
+    gl.uniform1i(textureLoc, unit)
     gl.activeTexture(gl.TEXTURE0 + unit)
     gl.bindTexture(gl.TEXTURE_2D, texture)
   }
@@ -149,12 +160,9 @@ class ShaderCanvas extends Component {
   loadTexture(url, repeat = false) {
     let gl = this.gl
     try {
-
-      // Create a texture.
       const texture = gl.createTexture()
       gl.bindTexture(gl.TEXTURE_2D, texture)
 
-      // Fill the texture with a 1x1 blue pixel.
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]))
 
       const image = new Image()
@@ -198,12 +206,6 @@ class ShaderCanvas extends Component {
     back
     */
     let urls = [
-     /* '/textures/cubemap/darkskies_rt.jpg',
-      '/textures/cubemap/darkskies_lf.jpg',
-      '/textures/cubemap/darkskies_up.jpg',
-      '/textures/cubemap/darkskies_dn.jpg',
-      '/textures/cubemap/darkskies_ft.jpg',
-      '/textures/cubemap/darkskies_bk.jpg',*/
       '/textures/cubemap/posx.jpg',
       '/textures/cubemap/negx.jpg',
       '/textures/cubemap/posy.jpg',
@@ -215,9 +217,6 @@ class ShaderCanvas extends Component {
     let gl = this.gl
     const cubemapTexture = gl.createTexture()
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubemapTexture)
-    // gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-    // gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-    // gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE)
     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 
@@ -227,7 +226,7 @@ class ShaderCanvas extends Component {
       image.src = urls[i]
       image.onerror = (e) => {
         console.log(e)
-        this.props.compileError('Error loading texture')
+        this.props.compileError('Error loading cubemap texture #' + i)
       }
       image.addEventListener('load', () => {
         gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
