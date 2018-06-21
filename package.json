@@ -1,6 +1,6 @@
 {
   "name": "shaderlab",
-  "version": "0.5.14",
+  "version": "0.5.15",
   "description": "shaderlab",
   "main": "index.js",
   "scripts": {
