@@ -9,12 +9,9 @@ import { compileSuccess, compileError } from '../store/actions'
 import vertexShaderSource from '../shader.vert'
 
 class ShaderCanvas extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     const { editor, config } = this.props
+
     this.gl = ReactDOM.findDOMNode(this).getContext('webgl');
     this.canvas = ReactDOM.findDOMNode(this)
     this.canvas.width = this.props.width
@@ -24,7 +21,9 @@ class ShaderCanvas extends Component {
     this.fpstime = 0
     this.success = false
     this.textures = {}
+
     this.compile(editor.shaderSource)
+
     if (this.success) {
       this.applyTexture(0, config.texture0)
       this.applyTexture(1, config.texture1)
@@ -32,6 +31,7 @@ class ShaderCanvas extends Component {
       this.applyTexture(3, config.texture3)
       this.loadCubeMaps()
     }
+
     this.paint()
   }
 
@@ -82,6 +82,18 @@ class ShaderCanvas extends Component {
     gl.uniform1i(gl.getUniformLocation(this.program, name), unit)
     gl.activeTexture(gl.TEXTURE0 + unit)
     gl.bindTexture(gl.TEXTURE_2D, this.textures[unit])
+  }
+
+  createBuffer() {
+    let gl = this.gl
+    let buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(this.positionLocation);
+    gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    gl.enable(gl.SAMPLE_COVERAGE);
+    gl.sampleCoverage(0.5, false);
   }
 
   getVertexShader(source) {
@@ -142,16 +154,7 @@ class ShaderCanvas extends Component {
       this.timeLocation = gl.getUniformLocation(program, 'time');
       gl.uniform1f(this.timeLocation, this.time);
 
-      let buffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-        -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0
-      ]), gl.STATIC_DRAW);
-      gl.enableVertexAttribArray(this.positionLocation);
-      gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-      gl.enable(gl.SAMPLE_COVERAGE);
-      gl.sampleCoverage(0.5, false);
+      this.createBuffer()
 
       this.program = program
     } catch (e) {
@@ -164,25 +167,29 @@ class ShaderCanvas extends Component {
     this.success = true
   }
 
-  loadTexture(url, repeat = false) {
+  loadTexture(url) {
     let gl = this.gl
     try {
       const texture = gl.createTexture()
       gl.bindTexture(gl.TEXTURE_2D, texture)
-
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]))
 
       const image = new Image()
-      image.crossOrigin = 'Anonymous';
+      //       image.crossOrigin = 'Anonymous';
       image.src = url
       image.onerror = (e) => {
         console.log(e)
         this.props.compileError('Error loading texture')
       }
-      image.addEventListener('load', () => {
+      image.onload = () => {
         gl.bindTexture(gl.TEXTURE_2D, texture)
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true)
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image)
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 
         let ext = (
           gl.getExtension('EXT_texture_filter_anisotropic') ||
@@ -190,12 +197,7 @@ class ShaderCanvas extends Component {
           gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic')
         )
         gl.texParameterf(gl.TEXTURE_2D, ext.TEXTURE_MAX_ANISOTROPY_EXT, 4)
-
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, repeat ? gl.REPEAT : gl.CLAMP_TO_EDGE)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-      })
+      }
 
       return texture
     } catch (e) {
@@ -204,14 +206,6 @@ class ShaderCanvas extends Component {
   }
 
   loadCubeMaps() {
-    /*
-    right
-    left
-    top
-    bottom
-    front
-    back
-    */
     let urls = [
       '/textures/cubemap/posx.jpg',
       '/textures/cubemap/negx.jpg',
@@ -220,14 +214,14 @@ class ShaderCanvas extends Component {
       '/textures/cubemap/posz.jpg',
       '/textures/cubemap/negz.jpg'
     ]
-    
+
     let gl = this.gl
-    const cubemapTexture = gl.createTexture()
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubemapTexture)
+    this.cubemapTexture = gl.createTexture()
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.cubemapTexture)
     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
 
-    for(let i=0; i<6; i++) {     
+    for (let i = 0; i < 6; i++) {
       const image = new Image()
       image.crossOrigin = 'Anonymous';
       image.src = urls[i]
@@ -239,14 +233,14 @@ class ShaderCanvas extends Component {
         gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
       })
     }
-    let cubemapLoc = gl.getUniformLocation(this.program, 'cubemap')
-    gl.uniform1i(cubemapLoc, 0)
+    gl.uniform1i(gl.getUniformLocation(this.program, 'cubemap'), 0)
   }
 
   paint() {
     if (this.success) {
       let elapsedtime = (Date.now() - this.start) / 1000.0;
       let framespeed = 1.0;
+
       const gl = this.gl
       const canvas = this.canvas
       gl.viewport(0, 0, canvas.width, canvas.height)
@@ -257,20 +251,26 @@ class ShaderCanvas extends Component {
       this.bindTexture(2)
       this.bindTexture(3)
 
+      // gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.cubemapTexture)
+      // gl.uniform1i(gl.getUniformLocation(this.program, 'cubemap'), 0)
+
       this.time += framespeed * elapsedtime;
+
       gl.uniform1f(this.timeLocation, this.time);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      
+
       this.fps++;
       this.fpstime += elapsedtime;
-      
+
       if (this.fpstime >= 1.0) {
         this.fpstime -= 1.0;
         this.fps = 0;
       }
-      
+
     }
+
     this.start = Date.now();
+
     requestAnimationFrame(() => {
       this.paint()
     })
