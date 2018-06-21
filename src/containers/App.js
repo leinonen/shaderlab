@@ -79,7 +79,10 @@ class App extends Component {
         <Navigation onFullscreen={this.onFullscreen} />
         <Editor
           onLoad={(editor) => { this.editor = editor; }}
-          style={{ visibility: app.showEditor ? 'visible' : 'hidden' }}
+          style={{ 
+            visibility: app.showEditor ? 'visible' : 'hidden',
+            backgroundColor: `rgba(30,30,30, ${config.editorAlpha})`
+          }}
           width={`${width}`}
           height={`${height}`}
         />
