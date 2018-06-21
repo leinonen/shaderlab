@@ -125,7 +125,7 @@ class Toolbox extends Component {
         {
           name: 'Raymarching Shadows',
           items: [
-            { type: 'snippet', name: 'Ambien Occlusion', source: ambientOcclusion, author: 'Shane' },
+            { type: 'snippet', name: 'Ambient Occlusion', source: ambientOcclusion, author: 'Shane' },
             { type: 'snippet', name: 'Soft Shadow', source: softShadow, author: 'Shane' }
           ]
         },
