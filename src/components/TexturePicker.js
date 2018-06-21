@@ -14,8 +14,10 @@ const Wraps = styled.div`
       border-radius: 4px;
       margin-bottom: 0.5rem;
       cursor: ${props => props.disabled ? 'inherit' : 'pointer'};
+      opacity: 0.5;
       &.active {
         border-color: rgba(200, 255, 0, 0.7);
+        opacity: 1;
       }
     }
   }
