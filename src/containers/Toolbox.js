@@ -15,6 +15,7 @@ import basicRaymarcher from '../examples/basics/raymarch.glsl'
 import basicNormal from '../examples/basics/normal.glsl'
 
 import colorHsv2rgb from '../examples/colors/hsv2rgb.glsl'
+import colorGamma from '../examples/colors/gamma.glsl'
 
 import primitiveSphere from '../examples/primitives/sphere.glsl'
 import primitiveBox from '../examples/primitives/box.glsl'
@@ -67,7 +68,8 @@ class Toolbox extends Component {
         {
           name: 'Color Functions',
           items: [
-            { type: 'snippet', name: 'HSV to RGB', source: colorHsv2rgb }
+            { type: 'snippet', name: 'HSV to RGB', source: colorHsv2rgb },
+            { type: 'snippet', name: 'Gamma', source: colorGamma }
           ]
         },
         {
