@@ -10,7 +10,7 @@ uniform sampler2D texture2;
 
 const float PI = acos(-1.0);
 const float PI2 = PI * 2.0;
-const float sections = 8.0;
+const float sections = 5.0;
 const float scale = 1.4;
 
 mat2 rot2( float angle ) {
@@ -27,7 +27,7 @@ vec3 hsv2rgb(vec3 c) {
 
 void main( void ) {
   vec2 p = (gl_FragCoord.xy - 0.5 * resolution.xy) / resolution.y;
-  p *= rot2(time *PI * .2 + cos(length(p)*PI/3. + time*.2*PI)*PI/2.);
+  p *= rot2(cos(length(p)*PI/3. + time*.2*PI)*PI/2.);
   float a = abs(mod(atan(p.y, p.x), PI2 / sections) - PI / sections) - time * PI * .05;
   p = vec2(cos(a), sin(a)) * length(p*scale);
   float mix1 = .5 + .5 * cos(16. * PI * p.x + .4 * time * PI);
