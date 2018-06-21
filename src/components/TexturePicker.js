@@ -4,13 +4,15 @@ import styled from 'styled-components'
 const Wraps = styled.div`
   display: flex;
   flex-wrap: wrap;
+  
   & > div {
-    flex: 1 1 16%;
+    flex: 1 1 ${props => props.size};
     & > img {
       max-width: 100%;
       box-sizing: border-box;
       border: 2px solid transparent;
       border-radius: 4px;
+      margin-bottom: 0.5rem;
       cursor: ${props => props.disabled ? 'inherit' : 'pointer'};
       &.active {
         border-color: rgba(200, 255, 0, 0.7);
@@ -19,10 +21,10 @@ const Wraps = styled.div`
   }
 `
 
-function TexturePicker({ textures, currentTexture, onSelect, disabled }) {
+function TexturePicker({ textures, currentTexture, onSelect, disabled, size }) {
 
   return (
-    <Wraps disabled={disabled}>
+    <Wraps disabled={disabled} size={size}>
       {
         textures.map((texture, idx) =>
           <div key={idx}>
@@ -39,7 +41,8 @@ function TexturePicker({ textures, currentTexture, onSelect, disabled }) {
 }
 
 TexturePicker.defaultProps = {
-  disabled: false
+  disabled: false,
+  size: '25%'
 }
 
 export default TexturePicker

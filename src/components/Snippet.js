@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Button from './Button'
 
 const Row = styled.div`
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   & > .butts {
     position: relative;
     & > button {

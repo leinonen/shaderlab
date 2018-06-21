@@ -28,7 +28,11 @@ const textures = [
   { url: '/textures/tunnel.jpg', thumb: '/textures/tunnel_thumb.jpg' },
   { url: '/textures/dots.jpg', thumb: '/textures/dots_thumb.jpg' },
   { url: '/textures/flesh.jpg', thumb: '/textures/flesh_thumb.jpg' },
-  { url: '/textures/spongebob.jpg', thumb: '/textures/spongebob_thumb.jpg' }
+  { url: '/textures/tex2_512.jpg', thumb: '/textures/tex2_512_thumb.jpg' },
+  { url: '/textures/tex6_512.jpg', thumb: '/textures/tex6_512_thumb.jpg' },
+  { url: '/textures/tex17_512.jpg', thumb: '/textures/tex17_512_thumb.jpg' }, 
+  { url: '/textures/tex1_512.jpg', thumb: '/textures/tex1_512_thumb.jpg' }, 
+  { url: '/textures/tex6_256.jpg', thumb: '/textures/tex6_256_thumb.jpg' }, 
 ]
 
 const cubeTextures = ['posx', 'negx', 'posy', 'negy', 'posz', 'negz'].map(name => ({
@@ -50,6 +54,11 @@ const ButtonWrapper = styled.div`
 const TextureRow = styled.div`
   display: flex;
   flex-wrap: nowrap;
+  background-color: rgba(0,0,0, 0.3);
+  border: 1px solid rgba(0,0,0, 0.3);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+
   & > div {
     flex: 1 1 auto;
     line-height: 2rem;
@@ -176,7 +185,7 @@ class Config extends Component {
               <label>cubemap</label>
             </div>
             <div>
-              <TexturePicker disabled textures={cubeTextures} />
+              <TexturePicker disabled textures={cubeTextures} size="16%" />
             </div>
           </TextureRow>
         </Group>

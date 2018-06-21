@@ -8,7 +8,7 @@ const initialState = {
   texture0: '/textures/tunnel.jpg',
   texture1: '/textures/dots.jpg',
   texture2: '/textures/flesh.jpg',
-  texture3: '/textures/spongebob.jpg'
+  texture3: '/textures/tex1_512.jpg'
 }
 
 const reducer = (state = initialState, action) => {
