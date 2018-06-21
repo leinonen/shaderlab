@@ -23,6 +23,7 @@ class ShaderCanvas extends Component {
     this.fps = 0
     this.fpstime = 0
     this.success = false
+    this.textures = {}
     this.compile(editor.shaderSource)
     if (this.success) {
       this.applyTexture(0, config.texture0)
@@ -70,11 +71,17 @@ class ShaderCanvas extends Component {
 
   applyTexture(unit = 0, textureUrl) {
     let gl = this.gl
-    let textureLoc = gl.getUniformLocation(this.program, `texture${unit}`)
-    let texture = this.loadTexture(textureUrl, true)
-    gl.uniform1i(textureLoc, unit)
+    const name = `texture${unit}`
+    this.textures[unit] = this.loadTexture(textureUrl, true)
+    this.bindTexture(unit)
+  }
+
+  bindTexture(unit) {
+    let gl = this.gl
+    const name = `texture${unit}`
+    gl.uniform1i(gl.getUniformLocation(this.program, name), unit)
     gl.activeTexture(gl.TEXTURE0 + unit)
-    gl.bindTexture(gl.TEXTURE_2D, texture)
+    gl.bindTexture(gl.TEXTURE_2D, this.textures[unit])
   }
 
   getVertexShader(source) {
@@ -244,6 +251,11 @@ class ShaderCanvas extends Component {
       const canvas = this.canvas
       gl.viewport(0, 0, canvas.width, canvas.height)
       gl.uniform2f(this.resolutionLocation, canvas.width, canvas.height);
+
+      this.bindTexture(0)
+      this.bindTexture(1)
+      this.bindTexture(2)
+      this.bindTexture(3)
 
       this.time += framespeed * elapsedtime;
       gl.uniform1f(this.timeLocation, this.time);
