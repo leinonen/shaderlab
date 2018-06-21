@@ -14,6 +14,9 @@ import Builtins from '../components/Builtins'
 import basicRaymarcher from '../examples/basics/raymarch.glsl'
 import basicNormal from '../examples/basics/normal.glsl'
 
+import ambientOcclusion from '../examples/basics/ao.glsl'
+import softShadow from '../examples/basics/softshadow.glsl'
+
 import colorHsv2rgb from '../examples/colors/hsv2rgb.glsl'
 import colorGamma from '../examples/colors/gamma.glsl'
 
@@ -117,6 +120,13 @@ class Toolbox extends Component {
             { type: 'snippet', name: 'Union', source: operatorUnion },
             { type: 'snippet', name: 'Union Round', source: operatorUnionRound, author: 'Mercury' },
             { type: 'snippet', name: 'Difference', source: operatorDifference }
+          ]
+        },
+        {
+          name: 'Raymarching Shadows',
+          items: [
+            { type: 'snippet', name: 'Ambien Occlusion', source: ambientOcclusion, author: 'Shane' },
+            { type: 'snippet', name: 'Soft Shadow', source: softShadow, author: 'Shane' }
           ]
         },
         {
