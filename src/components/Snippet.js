@@ -26,6 +26,12 @@ const TextArea = styled.textarea`
 `
 // https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
 
+const Author = styled.div`
+  margin-top: 0.5rem;
+  color: #777;
+  font-size: 80%;
+`
+
 class Snippet extends Component {
   constructor(props) {
     super(props)
@@ -45,7 +51,7 @@ class Snippet extends Component {
   }
 
   render() {
-    const { name, source } = this.props
+    const { name, source, author } = this.props
     const rows = source.split('\n').length + 1
     return (
       <Row>
@@ -61,6 +67,9 @@ class Snippet extends Component {
           rows={rows}
           innerRef={(node) => this.textRef = node}
           defaultValue={source}></TextArea>
+          {
+            author && <Author>Credits: {author}</Author>
+          }
       </Row>
     )
   }

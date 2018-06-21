@@ -17,10 +17,17 @@ import basicNormal from '../examples/basics/normal.glsl'
 import colorHsv2rgb from '../examples/colors/hsv2rgb.glsl'
 import colorGamma from '../examples/colors/gamma.glsl'
 
+import noiseFBM from '../examples/noise/fbm.glsl'
+
+import materalCheckers from '../examples/materials/checkers.glsl'
+import materailWood from '../examples/materials/wood.glsl'
+import materailMarble from '../examples/materials/marble.glsl'
+
 import primitiveSphere from '../examples/primitives/sphere.glsl'
 import primitiveBox from '../examples/primitives/box.glsl'
 import primitiveTorus from '../examples/primitives/torus.glsl'
 import primitivePlane from '../examples/primitives/plane.glsl'
+import primitiveMenger from '../examples/primitives/menger.glsl'
 
 import operatorIntersection from '../examples/operators/intersection.glsl'
 import operatorUnion from '../examples/operators/union.glsl'
@@ -68,24 +75,39 @@ class Toolbox extends Component {
         {
           name: 'Color Functions',
           items: [
-            { type: 'snippet', name: 'HSV to RGB', source: colorHsv2rgb },
+            { type: 'snippet', name: 'HSV to RGB', source: colorHsv2rgb, author: 'Hugh Kennedy' },
             { type: 'snippet', name: 'Gamma', source: colorGamma }
+          ]
+        },
+        {
+          name: 'Noise Functions',
+          items: [
+            { type: 'snippet', name: 'FBM', source: noiseFBM, author: 'Inigo Quilez' }
+          ]
+        },
+        {
+          name: 'Materials',
+          items: [
+            { type: 'snippet', name: 'Checkers Pattern', source: materalCheckers },
+            { type: 'snippet', name: 'Wood', source: materailWood },
+            { type: 'snippet', name: 'Marble', source: materailMarble }
           ]
         },
         {
           name: 'Raymarching Basics',
           items: [
             { type: 'snippet', name: 'Raymarching', source: basicRaymarcher },
-            { type: 'snippet', name: 'Normal / Gradient', source: basicNormal }
+            { type: 'snippet', name: 'Normal / Gradient', source: basicNormal, author: 'Jamie Wong' }
           ]
         },
         {
           name: 'Raymarching Primitives',
           items: [
-            { type: 'snippet', name: 'Sphere', source: primitiveSphere },
-            { type: 'snippet', name: 'Box', source: primitiveBox },
-            { type: 'snippet', name: 'Torus', source: primitiveTorus },
-            { type: 'snippet', name: 'Plane', source: primitivePlane }
+            { type: 'snippet', name: 'Sphere', source: primitiveSphere, author: 'Inigo Quilez' },
+            { type: 'snippet', name: 'Box', source: primitiveBox, author: 'Inigo Quilez' },
+            { type: 'snippet', name: 'Torus', source: primitiveTorus, author: 'Inigo Quilez' },
+            { type: 'snippet', name: 'Plane', source: primitivePlane, author: 'Inigo Quilez' },
+            { type: 'snippet', name: 'Menger Sponge', source: primitiveMenger, author: 'Inigo Quilez' }
           ]
         },
         {
@@ -93,7 +115,7 @@ class Toolbox extends Component {
           items: [
             { type: 'snippet', name: 'Intersection', source: operatorIntersection },
             { type: 'snippet', name: 'Union', source: operatorUnion },
-            { type: 'snippet', name: 'Union Round', source: operatorUnionRound },
+            { type: 'snippet', name: 'Union Round', source: operatorUnionRound, author: 'Mercury' },
             { type: 'snippet', name: 'Difference', source: operatorDifference }
           ]
         },
