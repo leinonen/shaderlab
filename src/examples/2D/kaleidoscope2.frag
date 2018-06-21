@@ -19,7 +19,8 @@ void main( void ) {
   p = vec2(cos(ma), sin(ma)) * length(p*scale);
   float mix1 = .5 + .5 * cos(16. * PI * p.x + PI * time * .4);
   float mix2 = .5 + .5 * sin(6. * PI * p.y);
-  vec3 col1 = mix(texture2D(texture0, p).rgb, texture2D(texture1, p).rgb, mix1);
+  vec2 dist = vec2(cos(p.x*PI+time*PI*.1), sin(p.x*PI+time*PI*.4)) * 0.2;
+  vec3 col1 = mix(texture2D(texture0, p+dist).rgb, texture2D(texture1, p+dist).rgb, mix1);
   vec3 col2 = texture2D(texture2, p + -time * .1).rgb; 
   gl_FragColor = vec4(clamp(pow(mix(col1, col2, mix2), vec3(1.0 / .7)), 0.0, 1.0), 1.0);
 }
