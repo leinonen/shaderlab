@@ -14,6 +14,9 @@ export const COLLAPSE_MENUS = 'COLLAPSE_MENUS'
 export const collapseMenus = () => ({ type: COLLAPSE_MENUS })
 
 
+export const EDITOR_ALPHA = 'EDITOR_ALPHA'
+export const setEditorAlpha = (payload) => ({ type: EDITOR_ALPHA, payload })
+
 export const SCALE_1X = 'SCALE_1X'
 export const scale1x = () => ({ type: SCALE_1X })
 

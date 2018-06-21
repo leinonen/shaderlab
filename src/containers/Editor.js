@@ -6,7 +6,7 @@ import AceEditor from 'react-ace';
 
 import 'brace/mode/glsl';
 import 'brace/theme/gruvbox';
-import { selectEditor } from '../store/selectors';
+import { selectEditor, selectConfig } from '../store/selectors';
 import { setEditorSource } from '../store/actions'
 
 // https://www.npmjs.com/package/brace
@@ -24,12 +24,16 @@ const Editor = (props) => (
     onChange={props.setEditorSource}
     value={props.editor.editorSource}
     focus
+    style={{
+      backgroundColor: `rgba(30,30,30, ${props.config.editorAlpha})`
+    }}
   />
 )
 
 const mapStateToProps = createSelector(
   selectEditor,
-  (editor) => ({ editor })
+  selectConfig,
+  (editor, config) => ({ editor, config })
 )
 
 const mapDispatchToProps = {

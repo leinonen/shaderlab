@@ -1,9 +1,10 @@
 import {
   SCALE_1X, SCALE_2X, SCALE_4X,
-  SET_TEXTURE0, SET_TEXTURE1, SET_TEXTURE2, SET_TEXTURE3
+  SET_TEXTURE0, SET_TEXTURE1, SET_TEXTURE2, SET_TEXTURE3, EDITOR_ALPHA
 } from '../actions'
 
 const initialState = {
+  editorAlpha: 0.6,
   scaling: 0.5,
   texture0: '/textures/tunnel.jpg',
   texture1: '/textures/dots.jpg',
@@ -13,6 +14,9 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+    case EDITOR_ALPHA: {
+      return { ...state, editorAlpha: action.payload }
+    }
     case SCALE_1X: {
       return { ...state, scaling: 1.0 }
     }

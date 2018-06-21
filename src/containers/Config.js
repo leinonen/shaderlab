@@ -10,9 +10,10 @@ import TexturePicker from '../components/TexturePicker'
 import Snippet from '../components/Snippet'
 
 import { selectApp, selectConfig } from '../store/selectors';
-import { 
-  scale1x, scale2x, scale4x, 
-  setTexture0, setTexture1, setTexture2, setTexture3
+import {
+  scale1x, scale2x, scale4x,
+  setTexture0, setTexture1, setTexture2, setTexture3, 
+  setEditorAlpha
 } from '../store/actions'
 
 const textureSource = `uniform sampler2D texture0;
@@ -30,9 +31,9 @@ const textures = [
   { url: '/textures/flesh.jpg', thumb: '/textures/flesh_thumb.jpg' },
   { url: '/textures/tex2_512.jpg', thumb: '/textures/tex2_512_thumb.jpg' },
   { url: '/textures/tex6_512.jpg', thumb: '/textures/tex6_512_thumb.jpg' },
-  { url: '/textures/tex17_512.jpg', thumb: '/textures/tex17_512_thumb.jpg' }, 
-  { url: '/textures/tex1_512.jpg', thumb: '/textures/tex1_512_thumb.jpg' }, 
-  { url: '/textures/tex6_256.jpg', thumb: '/textures/tex6_256_thumb.jpg' }, 
+  { url: '/textures/tex17_512.jpg', thumb: '/textures/tex17_512_thumb.jpg' },
+  { url: '/textures/tex1_512.jpg', thumb: '/textures/tex1_512_thumb.jpg' },
+  { url: '/textures/tex6_256.jpg', thumb: '/textures/tex6_256_thumb.jpg' },
 ]
 
 const cubeTextures = ['posx', 'negx', 'posy', 'negy', 'posz', 'negz'].map(name => ({
@@ -88,26 +89,32 @@ class Config extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      showScaling: false,
-      showTextures: false,
-      showCubemaps: false,
+      scalingExpanded: false,
+      editorExpanded: false,
+      texturesExpanded: false,
+      cubemapsExpanded: false,
     }
     this.toggleScaling = this.toggleScaling.bind(this)
     this.toggleTextures = this.toggleTextures.bind(this)
     this.toggleCubemaps = this.toggleCubemaps.bind(this)
+    this.toggleEditor = this.toggleEditor.bind(this)
     this.inputChange = this.inputChange.bind(this)
   }
 
   toggleScaling() {
-    this.setState({ showScaling: !this.state.showScaling })
+    this.setState({ scalingExpanded: !this.state.scalingExpanded })
   }
 
   toggleTextures() {
-    this.setState({ showTextures: !this.state.showTextures })
+    this.setState({ texturesExpanded: !this.state.texturesExpanded })
   }
 
   toggleCubemaps() {
-    this.setState({ showCubemaps: !this.state.showCubemaps })
+    this.setState({ cubemapsExpanded: !this.state.cubemapsExpanded })
+  }
+
+  toggleEditor() {
+    this.setState({ editorExpanded: !this.state.editorExpanded })
   }
 
   inputChange(e) {
@@ -116,18 +123,24 @@ class Config extends Component {
   }
 
   render() {
-    const { 
-      app, config, 
-      scale1x, scale2x, scale4x, 
-      setTexture0, setTexture1, setTexture2, setTexture3
+    const {
+      app, config,
+      scale1x, scale2x, scale4x,
+      setTexture0, setTexture1, setTexture2, setTexture3,
+      setEditorAlpha
     } = this.props
 
-    const { scaling, texture0, texture1, texture2, texture3 } = config
-    const { showScaling, showTextures, showCubemaps } = this.state
+    const {
+      scaling, editorAlpha, texture0, texture1, texture2, texture3
+    } = config
+
+    const {
+      scalingExpanded, editorExpanded, texturesExpanded, cubemapsExpanded
+    } = this.state
 
     return (
       <Menu expanded={app.showConfig}>
-        <Group name="Scaling" expanded={showScaling} onExpandToggle={this.toggleScaling} >
+        <Group name="Scaling" expanded={scalingExpanded} onExpandToggle={this.toggleScaling} >
           <p>Lower scaling will improve performance but reduce image quality.</p>
           <p>Useful when building complex shaders that your GPU can't handle :)</p>
           <TextureRow>
@@ -143,7 +156,27 @@ class Config extends Component {
             </div>
           </TextureRow>
         </Group>
-        <Group name="Textures" expanded={showTextures} onExpandToggle={this.toggleTextures} >
+
+        <Group name="Editor" expanded={editorExpanded} onExpandToggle={this.toggleEditor} >
+          <p>Adjust the transparency of the editor background.</p>
+          <TextureRow>
+            <div className="shrink">
+              <label>Background Alpha</label>
+            </div>
+            <div>
+              <ButtonWrapper>
+                <Button active={editorAlpha === 0.2} onClick={() => setEditorAlpha(0.2)}>20%</Button>
+                <Button active={editorAlpha === 0.3} onClick={() => setEditorAlpha(0.3)}>30%</Button>
+                <Button active={editorAlpha === 0.4} onClick={() => setEditorAlpha(0.4)}>40%</Button>
+                <Button active={editorAlpha === 0.5} onClick={() => setEditorAlpha(0.5)}>50%</Button>
+                <Button active={editorAlpha === 0.6} onClick={() => setEditorAlpha(0.6)}>60%</Button>
+                <Button active={editorAlpha === 0.7} onClick={() => setEditorAlpha(0.7)}>70%</Button>
+              </ButtonWrapper>
+            </div>
+          </TextureRow>
+        </Group>
+
+        <Group name="Textures" expanded={texturesExpanded} onExpandToggle={this.toggleTextures} >
           <Snippet name="Texture uniforms" source={textureSource} />
           <TextureRow>
             <div className="shrink">
@@ -178,7 +211,8 @@ class Config extends Component {
             </div>
           </TextureRow>
         </Group>
-        <Group name="Cubemaps" expanded={showCubemaps} onExpandToggle={this.toggleCubemaps} >
+
+        <Group name="Cubemaps" expanded={cubemapsExpanded} onExpandToggle={this.toggleCubemaps} >
           <Snippet name="Cubemap uniform" source={cubemapSource} />
           <TextureRow>
             <div className="shrink">
@@ -207,7 +241,8 @@ const mapDispatchToProps = {
   setTexture0,
   setTexture1,
   setTexture2,
-  setTexture3
+  setTexture3,
+  setEditorAlpha
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Config);
