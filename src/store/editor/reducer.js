@@ -1,4 +1,4 @@
-import defaultShader from '../../examples/2D/fun_plasma.frag'
+import defaultShader from '../../examples/2D/kaleidoscope.frag'
 
 import {
   SET_SHADER_SOURCE, 

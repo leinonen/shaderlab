@@ -3,14 +3,14 @@ import styled from 'styled-components'
 
 import Example from './Example'
 
-import exampleHippiePlasma from '../examples/2D/fun_plasma.frag'
+import exampleKaleido from '../examples/2D/kaleidoscope.frag'
 import exampleRaymarcher from '../examples/raymarch/raymarch_cube.frag'
 import exampleLattice from '../examples/raymarch/lattice.frag'
 import exampleFractal from '../examples/2D/julia.frag'
 import exampleMetaballs from '../examples/raymarch/metaballs_example.frag'
 
 const examples = [
-  { type: 'example', name: 'Plasma-ish', source: exampleHippiePlasma, thumbnail: 'plasma.png' },
+  { type: 'example', name: 'Kaleidoscope', source: exampleKaleido, thumbnail: 'kaleido.png' },
   { type: 'example', name: 'Julia Fractal', source: exampleFractal, thumbnail: 'julia.png' },
   { type: 'example', name: 'Cube', source: exampleRaymarcher, thumbnail: 'cube.png' },
   { type: 'example', name: 'Lattice', source: exampleLattice, thumbnail: 'lattice.png' },
