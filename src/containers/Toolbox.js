@@ -104,7 +104,7 @@ class Toolbox extends Component {
           ]
         },
         {
-          name: 'Raymarching Primitives',
+          name: 'Raymarching: Primitives',
           items: [
             { type: 'snippet', name: 'Sphere', source: primitiveSphere, author: 'Inigo Quilez' },
             { type: 'snippet', name: 'Box', source: primitiveBox, author: 'Inigo Quilez' },
@@ -114,7 +114,7 @@ class Toolbox extends Component {
           ]
         },
         {
-          name: 'Raymarching Boolean Operators',
+          name: 'Raymarching: Boolean Operators',
           items: [
             { type: 'snippet', name: 'Intersection', source: operatorIntersection },
             { type: 'snippet', name: 'Union', source: operatorUnion },
@@ -123,14 +123,14 @@ class Toolbox extends Component {
           ]
         },
         {
-          name: 'Raymarching Shadows',
+          name: 'Raymarching: Shadows',
           items: [
             { type: 'snippet', name: 'Ambient Occlusion', source: ambientOcclusion, author: 'Shane' },
             { type: 'snippet', name: 'Soft Shadow', source: softShadow, author: 'Shane' }
           ]
         },
         {
-          name: 'Tutorials',
+          name: 'Tutorials & Resources',
           items: [
             {
               type: 'link',
@@ -149,12 +149,7 @@ class Toolbox extends Component {
               name: 'Ray Marching and Signed Distance Functions',
               url: 'http://jamie-wong.com/2016/07/15/ray-marching-signed-distance-functions/',
               description: 'Another good tutorial about raymarching distance fields'
-            }
-          ]
-        },
-        {
-          name: 'Resources',
-          items: [
+            },
             {
               type: 'link',
               name: 'Inigo Quilez - Articles',
