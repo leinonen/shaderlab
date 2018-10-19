@@ -104,7 +104,7 @@ class Toolbox extends Component {
           ]
         },
         {
-          name: 'Raymarching: Primitives',
+          name: 'Raymarching Primitives',
           items: [
             { type: 'snippet', name: 'Sphere', source: primitiveSphere, author: 'Inigo Quilez' },
             { type: 'snippet', name: 'Box', source: primitiveBox, author: 'Inigo Quilez' },
@@ -114,7 +114,7 @@ class Toolbox extends Component {
           ]
         },
         {
-          name: 'Raymarching: Boolean Operators',
+          name: 'Raymarching Boolean Operators',
           items: [
             { type: 'snippet', name: 'Intersection', source: operatorIntersection },
             { type: 'snippet', name: 'Union', source: operatorUnion },
@@ -123,7 +123,7 @@ class Toolbox extends Component {
           ]
         },
         {
-          name: 'Raymarching: Shadows',
+          name: 'Raymarching Shadows',
           items: [
             { type: 'snippet', name: 'Ambient Occlusion', source: ambientOcclusion, author: 'Shane' },
             { type: 'snippet', name: 'Soft Shadow', source: softShadow, author: 'Shane' }
