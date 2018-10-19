@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 
-import { selectExample } from '../store/actions'
+import actions from '../store/actions'
 
 import Group from '../components/Group'
 import Examples from '../components/Examples'
@@ -64,15 +64,15 @@ class Toolbox extends Component {
     this.state = {
       groups: [
         {
-          name: 'GLSL Functions',
-          items: [
-            { type: 'builtin' }
-          ]
-        },
-        {
           name: 'Examples',
           items: [
             { type: 'examples' }
+          ]
+        },
+        {
+          name: 'GLSL Functions',
+          items: [
+            { type: 'builtin' }
           ]
         },
         {
@@ -230,8 +230,4 @@ class Toolbox extends Component {
 
 const mapStateToProps = null
 
-const mapDispatchToProps = {
-  selectExample
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Toolbox);
+export default connect(mapStateToProps, actions)(Toolbox);

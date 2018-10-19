@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 import { selectEditor, selectConfig } from '../store/selectors'
 
-import { compileSuccess, compileError } from '../store/actions'
+import actions from '../store/actions'
 
 import vertexShaderSource from '../shader.vert'
 
@@ -287,9 +287,4 @@ const mapStateToProps = createSelector(
   (editor, config) => ({ editor, config })
 )
 
-const mapDispatchToProps = {
-  compileSuccess,
-  compileError
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ShaderCanvas)
+export default connect(mapStateToProps, actions)(ShaderCanvas)

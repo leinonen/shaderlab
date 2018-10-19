@@ -13,7 +13,7 @@ import Toolbox from './Toolbox'
 import Config from './Config'
 
 import { selectApp, selectEditor, selectConfig } from '../store/selectors'
-import { collapseMenus, toggleEditor, setShaderSource, setEditorSource, toggleFullscreen } from '../store/actions'
+import actions from '../store/actions'
 
 class App extends Component {
   constructor(props) {
@@ -100,12 +100,5 @@ const mapStateToProps = createSelector(
   selectConfig,
   (app, editor, config) => ({ app, editor, config })
 )
-const mapDispatchToProps = {
-  setEditorSource,
-  setShaderSource,
-  collapseMenus,
-  toggleEditor,
-  toggleFullscreen
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default connect(mapStateToProps, actions)(App)

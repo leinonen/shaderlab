@@ -10,11 +10,7 @@ import TexturePicker from '../components/TexturePicker'
 import Snippet from '../components/Snippet'
 
 import { selectApp, selectConfig } from '../store/selectors';
-import {
-  scale1x, scale2x, scale4x,
-  setTexture0, setTexture1, setTexture2, setTexture3, 
-  setEditorAlpha
-} from '../store/actions'
+import actions from '../store/actions'
 
 const textureSource = `uniform sampler2D texture0;
 uniform sampler2D texture1;
@@ -234,15 +230,4 @@ const mapStateToProps = createSelector(
   (app, config) => ({ app, config })
 )
 
-const mapDispatchToProps = {
-  scale1x,
-  scale2x,
-  scale4x,
-  setTexture0,
-  setTexture1,
-  setTexture2,
-  setTexture3,
-  setEditorAlpha
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Config);
+export default connect(mapStateToProps, actions)(Config);

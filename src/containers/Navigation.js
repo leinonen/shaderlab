@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { createSelector } from 'reselect'
 
 import { selectApp } from '../store/selectors'
-import { toggleConfig, toggleEditor, toggleToolbox, reset } from '../store/actions'
+import actions from '../store/actions'
 
 import Icon from '../components/Icon'
 import Button, { ButtonLink } from '../components/Button'
@@ -59,11 +59,4 @@ const mapStateToProps = createSelector(
   (app) => ({ app })
 )
 
-const mapDispatchToProps = {
-  reset,
-  toggleEditor,
-  toggleConfig,
-  toggleToolbox
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Navigation)
+export default connect(mapStateToProps, actions)(Navigation)

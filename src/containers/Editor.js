@@ -7,7 +7,7 @@ import AceEditor from 'react-ace';
 import 'brace/mode/glsl';
 import 'brace/theme/gruvbox';
 import { selectEditor } from '../store/selectors';
-import { setEditorSource } from '../store/actions'
+import actions from '../store/actions'
 
 // https://www.npmjs.com/package/brace
 // https://github.com/securingsincity/react-ace/blob/master/docs/Ace.md
@@ -32,8 +32,4 @@ const mapStateToProps = createSelector(
   (editor) => ({ editor })
 )
 
-const mapDispatchToProps = {
-  setEditorSource
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Editor)
+export default connect(mapStateToProps, actions)(Editor)
