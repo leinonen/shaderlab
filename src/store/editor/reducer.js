@@ -1,8 +1,10 @@
 import defaultShader from '../../examples/2D/fun_plasma.frag'
 
 import {
-  SET_SHADER_SOURCE, SET_EDITOR_SOURCE,
-  COMPILE_SUCCESS, COMPILE_ERROR,
+  SET_SHADER_SOURCE, 
+  SET_EDITOR_SOURCE,
+  COMPILE_SUCCESS, 
+  COMPILE_ERROR,
   RESET,
   SELECT_EXAMPLE
 } from '../actions'
